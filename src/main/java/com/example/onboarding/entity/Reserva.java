@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Table(name = "reservas")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Reserva {
 
     @Id

@@ -9,6 +9,8 @@ import lombok.*;
 @Table(name = "espacios")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class EspacioFisico {
 
     @Id

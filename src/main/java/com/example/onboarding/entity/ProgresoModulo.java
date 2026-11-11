@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "progreso_modulo", uniqueConstraints = @UniqueConstraint(name = "uk_progreso_usuario_modulo", columnNames = {"usuario_id", "modulo_id"}))
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ProgresoModulo {
 
     @Id

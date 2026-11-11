@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "sesiones")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class SesionSeguimiento {
 
     @Id

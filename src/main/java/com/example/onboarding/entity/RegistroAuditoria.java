@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 @Table(name = "auditoria")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class RegistroAuditoria {
 
     @Id

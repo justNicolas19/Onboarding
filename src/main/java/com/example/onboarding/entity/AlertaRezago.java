@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Table(name = "alertas_rezago")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class AlertaRezago {
 
     @Id

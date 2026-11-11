@@ -12,6 +12,8 @@ import java.util.List;
 @Table(name = "rutas")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Ruta {
 
     @Id

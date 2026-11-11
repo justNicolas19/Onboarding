@@ -34,6 +34,19 @@ public class GlobalExceptionHandler {
         return construir(HttpStatus.FORBIDDEN, ex.getMessage(), List.of());
     }
 
+    /** Login fallido: 401 con un mensaje genérico. */
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ResponseEntity<ErrorResponse> credencialesInvalidas(CredencialesInvalidasException ex) {
+        return construir(HttpStatus.UNAUTHORIZED, ex.getMessage(), List.of());
+    }
+
+    /** Moodle o Teams fallaron o no respondieron: 502 para distinguirlo de un error propio. */
+    @ExceptionHandler(IntegracionException.class)
+    public ResponseEntity<ErrorResponse> integracion(IntegracionException ex) {
+        log.error("Falla en una integración externa", ex);
+        return construir(HttpStatus.BAD_GATEWAY, ex.getMessage(), List.of());
+    }
+
     /** Lo lanza @PreAuthorize cuando el rol no alcanza. Sin este handler caería en el 500 genérico. */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> sinPermiso(AccessDeniedException ex) {

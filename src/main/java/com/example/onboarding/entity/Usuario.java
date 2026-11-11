@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Table(name = "usuarios")
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Usuario {
 
     @Id

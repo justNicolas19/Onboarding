@@ -9,6 +9,8 @@ import lombok.*;
 @Table(name = "modulos", uniqueConstraints = @UniqueConstraint(name = "uk_modulo_ruta_orden", columnNames = {"ruta_id", "orden"}))
 @Data
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Modulo {
 
     @Id

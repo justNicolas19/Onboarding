@@ -1,0 +1,3548 @@
+﻿
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\pom.xml ==========
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.example</groupId>
+	<artifactId>onboarding</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name/>
+	<description/>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\README.md ==========
+
+# Onboarding
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\.mvn\wrapper\maven-wrapper.properties ==========
+
+wrapperVersion=3.3.4
+distributionType=only-script
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.10.0/apache-maven-3.10.0-bin.zip
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\OnboardingApplication.java ==========
+
+package com.example.onboarding;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class OnboardingApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(OnboardingApplication.class, args);
+	}
+
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\config\OpenApiConfig.java ==========
+
+package com.example.onboarding.config;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("API de Onboarding")
+                        .version("1.0")
+                        .description("Plataforma mÃ³vil de onboarding y capacitaciÃ³n normativa"))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .components(new Components().addSecuritySchemes("bearerAuth",
+                        new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\config\PasswordConfig.java ==========
+
+package com.example.onboarding.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+public class PasswordConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\config\SecurityConfig.java ==========
+
+package com.example.onboarding.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+        return http.build();
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\AlertaRezagoController.java ==========
+
+package com.example.onboarding.controller;
+
+
+
+import com.example.onboarding.dto.response.AlertaRezagoResponse;
+import com.example.onboarding.service.AlertaRezagoService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import static com.example.onboarding.util.SecurityUtils.usuarioActualId;
+
+@RestController
+@RequestMapping("/api/alertas")
+@RequiredArgsConstructor
+public class AlertaRezagoController {
+
+    private final AlertaRezagoService alertaService;
+
+    @GetMapping("/mi-equipo")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<AlertaRezagoResponse>> delEquipo() {
+        return ResponseEntity.ok(alertaService.listarPorManager(usuarioActualId()));
+    }
+
+    @GetMapping("/mias")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<List<AlertaRezagoResponse>> mias() {
+        return ResponseEntity.ok(alertaService.listarPorEmpleado(usuarioActualId()));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\AuditoriaController.java ==========
+
+package com.example.onboarding.controller;
+
+import com.example.onboarding.dto.response.AuditoriaResponse;
+import com.example.onboarding.service.AuditoriaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/auditoria")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMINISTRADOR')")
+public class AuditoriaController {
+
+    private final AuditoriaService auditoriaService;
+
+    /** ParÃ¡metros opcionales: page, size y sort. Por defecto, 20 registros, del mÃ¡s reciente al mÃ¡s antiguo. */
+    @GetMapping
+    public ResponseEntity<PagedModel<AuditoriaResponse>> consultar(
+            @PageableDefault(size = 20, sort = "fechaHora", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(new PagedModel<>(auditoriaService.consultar(pageable)));
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<PagedModel<AuditoriaResponse>> porUsuario(
+            @PathVariable Long usuarioId,
+            @PageableDefault(size = 20, sort = "fechaHora", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(new PagedModel<>(auditoriaService.consultarPorUsuario(usuarioId, pageable)));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\EspacioController.java ==========
+
+package com.example.onboarding.controller;
+
+import com.example.onboarding.dto.request.EspacioRequest;
+import com.example.onboarding.dto.response.EspacioResponse;
+import com.example.onboarding.service.EspacioService;
+import com.example.onboarding.util.UbicacionUtil;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/espacios")
+@RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
+public class EspacioController {
+
+    private final EspacioService espacioService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<EspacioResponse> crear(@Valid @RequestBody EspacioRequest request) {
+        EspacioResponse creado = espacioService.crear(request);
+        return ResponseEntity.created(UbicacionUtil.de(creado.id())).body(creado);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<EspacioResponse> actualizar(@PathVariable Long id,
+                                                      @Valid @RequestBody EspacioRequest request) {
+        return ResponseEntity.ok(espacioService.actualizar(id, request));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EspacioResponse> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(espacioService.obtener(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EspacioResponse>> listarActivos() {
+        return ResponseEntity.ok(espacioService.listarActivos());
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\ModuloController.java ==========
+
+package com.example.onboarding.controller;
+
+import com.example.onboarding.dto.request.ModuloRequest;
+import com.example.onboarding.dto.response.ModuloResponse;
+import com.example.onboarding.service.ModuloService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
+public class ModuloController {
+
+    private final ModuloService moduloService;
+
+    @PostMapping("/modulos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<ModuloResponse> crear(@Valid @RequestBody ModuloRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(moduloService.crear(request));
+    }
+
+    @PutMapping("/modulos/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<ModuloResponse> actualizar(@PathVariable Long id,
+                                                     @Valid @RequestBody ModuloRequest request) {
+        return ResponseEntity.ok(moduloService.actualizar(id, request));
+    }
+
+    @DeleteMapping("/modulos/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        moduloService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/rutas/{rutaId}/modulos")
+    public ResponseEntity<List<ModuloResponse>> listarPorRuta(@PathVariable Long rutaId) {
+        return ResponseEntity.ok(moduloService.listarPorRuta(rutaId));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\ProgresoController.java ==========
+
+package com.example.onboarding.controller;
+
+import com.example.onboarding.dto.request.ReportarAvanceRequest;
+import com.example.onboarding.dto.response.ProgresoModuloResponse;
+import com.example.onboarding.dto.response.ResumenAvanceResponse;
+import com.example.onboarding.service.ProgresoService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.example.onboarding.util.SecurityUtils.usuarioActualId;
+
+@RestController
+@RequestMapping("/api/progreso")
+@RequiredArgsConstructor
+public class ProgresoController {
+
+    private final ProgresoService progresoService;
+
+    /** Ruta del empleado autenticado, con el estado de cada mÃ³dulo. */
+    @GetMapping("/mi-ruta")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<List<ProgresoModuloResponse>> miRuta() {
+        return ResponseEntity.ok(progresoService.listarRuta(usuarioActualId()));
+    }
+
+    @PostMapping("/modulos/{moduloId}/abrir")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<ProgresoModuloResponse> abrirModulo(@PathVariable Long moduloId) {
+        return ResponseEntity.ok(progresoService.abrirModulo(usuarioActualId(), moduloId));
+    }
+
+    @PostMapping("/avance")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<ProgresoModuloResponse> reportarAvance(@Valid @RequestBody ReportarAvanceRequest request) {
+        return ResponseEntity.ok(progresoService.reportarAvance(usuarioActualId(), request));
+    }
+
+    /** Panel de seguimiento del manager. */
+    @GetMapping("/equipo")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<ResumenAvanceResponse>> resumenEquipo() {
+        return ResponseEntity.ok(progresoService.resumenEquipo(usuarioActualId()));
+    }
+
+    @GetMapping("/empleados/{empleadoId}")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<ProgresoModuloResponse>> rutaDeEmpleado(@PathVariable Long empleadoId) {
+        return ResponseEntity.ok(progresoService.listarRutaDeEmpleado(usuarioActualId(), empleadoId));
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\ReservaController.java ==========
+
+package com.example.onboarding.controller;
+
+import com.example.onboarding.dto.request.ReservaRequest;
+import com.example.onboarding.dto.response.ReservaResponse;
+import com.example.onboarding.service.ReservaService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.example.onboarding.util.SecurityUtils.usuarioActualId;
+
+@RestController
+@RequestMapping("/api/reservas")
+@RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('MANAGER', 'EMPLEADO')")
+public class ReservaController {
+
+    private final ReservaService reservaService;
+
+    @PostMapping
+    public ResponseEntity<ReservaResponse> crear(@Valid @RequestBody ReservaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.crear(usuarioActualId(), request));
+    }
+
+    @GetMapping("/mias")
+    public ResponseEntity<List<ReservaResponse>> misReservas() {
+        return ResponseEntity.ok(reservaService.listarPorUsuario(usuarioActualId()));
+    }
+
+    /** OcupaciÃ³n de un espacio en un rango. Fechas en formato ISO, por ejemplo 2026-11-10T08:00:00. */
+    @GetMapping("/espacio/{espacioId}")
+    public ResponseEntity<List<ReservaResponse>> porEspacio(
+            @PathVariable Long espacioId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta) {
+        return ResponseEntity.ok(reservaService.listarPorEspacio(espacioId, desde, hasta));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\RutaController.java ==========
+
+package com.example.onboarding.controller;
+
+
+import com.example.onboarding.dto.request.RutaRequest;
+import com.example.onboarding.dto.response.RutaResponse;
+import com.example.onboarding.service.RutaService;
+import com.example.onboarding.util.UbicacionUtil;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/rutas")
+@RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
+public class RutaController {
+
+    private final RutaService rutaService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<RutaResponse> crear(@Valid @RequestBody RutaRequest request) {
+        RutaResponse creada = rutaService.crear(request);
+        return ResponseEntity.created(UbicacionUtil.de(creada.id())).body(creada);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<RutaResponse> actualizar(@PathVariable Long id, @Valid @RequestBody RutaRequest request) {
+        return ResponseEntity.ok(rutaService.actualizar(id, request));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RutaResponse> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(rutaService.obtener(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RutaResponse>> listarActivas() {
+        return ResponseEntity.ok(rutaService.listarActivas());
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\SesionController.java ==========
+
+package com.example.onboarding.controller;
+
+import com.example.onboarding.dto.request.SesionRequest;
+import com.example.onboarding.dto.request.SesionSoporteRequest;
+import com.example.onboarding.dto.response.SesionResponse;
+import com.example.onboarding.exception.AccesoDenegadoException;
+import com.example.onboarding.service.SesionService;
+import com.example.onboarding.util.UbicacionUtil;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.example.onboarding.util.SecurityUtils.usuarioActualId;
+
+@RestController
+@RequestMapping("/api/sesiones")
+@RequiredArgsConstructor
+public class SesionController {
+
+    private final SesionService sesionService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<SesionResponse> agendar(@Valid @RequestBody SesionRequest request) {
+        SesionResponse creada = sesionService.agendar(usuarioActualId(), request);
+        return ResponseEntity.created(UbicacionUtil.de(creada.id())).body(creada);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<SesionResponse> reprogramar(@PathVariable Long id,
+                                                      @Valid @RequestBody SesionRequest request) {
+        return ResponseEntity.ok(sesionService.reprogramar(usuarioActualId(), id, request));
+    }
+
+    @PostMapping("/{id}/cancelar")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<SesionResponse> cancelar(@PathVariable Long id) {
+        return ResponseEntity.ok(sesionService.cancelar(usuarioActualId(), id));
+    }
+
+    @PostMapping("/{id}/realizar")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<SesionResponse> marcarRealizada(@PathVariable Long id) {
+        return ResponseEntity.ok(sesionService.marcarRealizada(usuarioActualId(), id));
+    }
+
+    @PostMapping("/{id}/soporte")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<SesionResponse> adjuntarSoporte(@PathVariable Long id,
+                                                          @Valid @RequestBody SesionSoporteRequest request) {
+        return ResponseEntity.ok(sesionService.adjuntarSoporte(usuarioActualId(), id, request));
+    }
+
+    /** Solo el manager o el empleado de la sesiÃ³n pueden verla. */
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SesionResponse> obtener(@PathVariable Long id) {
+        SesionResponse sesion = sesionService.obtener(id);
+        Long actual = usuarioActualId();
+        if (!actual.equals(sesion.managerId()) && !actual.equals(sesion.empleadoId())) {
+            throw new AccesoDenegadoException("No participas en esta sesiÃ³n");
+        }
+        return ResponseEntity.ok(sesion);
+    }
+
+    @GetMapping("/mi-agenda")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<SesionResponse>> miAgenda() {
+        return ResponseEntity.ok(sesionService.listarPorManager(usuarioActualId()));
+    }
+
+    @GetMapping("/mis-sesiones")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<List<SesionResponse>> misSesiones() {
+        return ResponseEntity.ok(sesionService.listarPorEmpleado(usuarioActualId()));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\controller\UsuarioController.java ==========
+
+package com.example.onboarding.controller;
+
+
+
+import com.example.onboarding.dto.request.UsuarioRequest;
+import com.example.onboarding.dto.response.UsuarioResponse;
+import com.example.onboarding.service.UsuarioService;
+import com.example.onboarding.util.UbicacionUtil;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.example.onboarding.util.SecurityUtils.usuarioActualId;
+
+@RestController
+@RequestMapping("/api/usuarios")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMINISTRADOR')")
+public class UsuarioController {
+
+    private final UsuarioService usuarioService;
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponse> crear(@Valid @RequestBody UsuarioRequest request) {
+        UsuarioResponse creado = usuarioService.crear(usuarioActualId(), request);
+        return ResponseEntity.created(UbicacionUtil.de(creado.id())).body(creado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> actualizar(@PathVariable Long id,
+                                                      @Valid @RequestBody UsuarioRequest request) {
+        return ResponseEntity.ok(usuarioService.actualizar(usuarioActualId(), id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> desactivar(@PathVariable Long id) {
+        usuarioService.desactivar(usuarioActualId(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.obtener(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UsuarioResponse>> listar() {
+        return ResponseEntity.ok(usuarioService.listar());
+    }
+
+    /** Empleados a cargo del manager autenticado. */
+    @GetMapping("/mi-equipo")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<UsuarioResponse>> miEquipo() {
+        return ResponseEntity.ok(usuarioService.listarEmpleadosDeManager(usuarioActualId()));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\EspacioRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record EspacioRequest(
+        @NotBlank @Size(max = 100) String nombre,
+        @NotNull @Min(1) Integer capacidad,
+        Boolean activo
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\LoginRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record LoginRequest(
+        @NotBlank @Email String correo,
+        @NotBlank String contrasena
+) {}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\ModuloRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+
+
+import com.example.onboarding.enums.TipoModulo;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record ModuloRequest(
+        @NotNull Long rutaId,
+        @NotBlank @Size(max = 150) String titulo,
+        @Size(max = 500) String descripcion,
+        @NotNull TipoModulo tipo,
+        @NotNull @Min(1) Integer orden,
+        @NotBlank @Size(max = 60) String idMoodle,
+        @Min(0) @Max(100) Integer puntajeMinimo
+) {}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\ReportarAvanceRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * El empleado avisa que terminÃ³ un mÃ³dulo. La calificaciÃ³n no viaja desde la app:
+ * el servidor la consulta directamente en Moodle.
+ */
+public record ReportarAvanceRequest(
+        @NotNull Long moduloId
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\ReservaRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+
+public record ReservaRequest(
+        @NotNull Long espacioId,
+        Long sesionId,
+        @NotNull @Future LocalDateTime inicio,
+        @NotNull @Future LocalDateTime fin
+) {}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\RutaRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record RutaRequest(
+        @NotBlank @Size(max = 120) String nombre,
+        @Size(max = 500) String descripcion,
+        Boolean activa
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\SesionRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+
+/** Sirve para agendar y para reprogramar. El manager sale del usuario autenticado. */
+public record SesionRequest(
+        @NotNull Long empleadoId,
+        @NotNull @Future LocalDateTime fechaHora,
+        Long espacioId
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\SesionSoporteRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+/** Adjunta el soporte que demuestra que la sesiÃ³n se realizÃ³. */
+public record SesionSoporteRequest(
+        @NotBlank @Size(max = 500) String soporteUrl
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\request\UsuarioRequest.java ==========
+
+package com.example.onboarding.dto.request;
+
+import com.example.onboarding.enums.Rol;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
+
+public record UsuarioRequest(
+        @NotBlank @Size(max = 120) String nombre,
+        @NotBlank @Email @Size(max = 160) String correo,
+        /** Obligatoria al crear; opcional al actualizar (si viene vacÃ­a se conserva la actual). */
+        @Size(min = 8, max = 72) String contrasena,
+        @NotNull Rol rol,
+        @Size(max = 100) String cargo,
+        LocalDate fechaIngreso,
+        @Size(max = 60) String idMoodle,
+        Long managerId,
+        Long rutaId
+) {}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\AlertaRezagoResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import com.example.onboarding.enums.NivelAlerta;
+
+import java.time.LocalDateTime;
+
+public record AlertaRezagoResponse(
+        Long id,
+        Long empleadoId,
+        String empleadoNombre,
+        String motivo,
+        NivelAlerta nivel,
+        LocalDateTime fecha
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\AuditoriaResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import com.example.onboarding.enums.AccionAuditoria;
+
+import java.time.LocalDateTime;
+
+public record AuditoriaResponse(
+        Long id,
+        Long usuarioId,
+        String usuarioNombre,
+        AccionAuditoria accion,
+        String entidad,
+        Long entidadId,
+        String detalle,
+        LocalDateTime fechaHora
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\AuthResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import com.example.onboarding.enums.Rol;
+
+import java.time.LocalDateTime;
+
+/** Respuesta del login. La app guarda el token y lo envÃ­a en cada peticiÃ³n. */
+public record AuthResponse(
+        String token,
+        LocalDateTime expiraEn,
+        Long usuarioId,
+        String nombre,
+        Rol rol
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\ErrorResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record ErrorResponse(
+        LocalDateTime timestamp,
+        int status,
+        String error,
+        String mensaje,
+        List<String> detalles
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\EspacioResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+
+public record EspacioResponse(
+        Long id,
+        String nombre,
+        Integer capacidad,
+        Boolean activo
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\ModuloResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+
+import com.example.onboarding.enums.TipoModulo;
+
+public record ModuloResponse(
+        Long id,
+        Long rutaId,
+        String titulo,
+        String descripcion,
+        TipoModulo tipo,
+        Integer orden,
+        Integer puntajeMinimo
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\ProgresoModuloResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import com.example.onboarding.enums.EstadoProgreso;
+
+import java.time.LocalDateTime;
+
+/** Estado de un mÃ³dulo para el empleado. Incluye lo necesario para pintar el candado en la app. */
+public record ProgresoModuloResponse(
+        Long id,
+        Long moduloId,
+        String moduloTitulo,
+        Integer orden,
+        EstadoProgreso estado,
+        Double calificacion,
+        Integer puntajeMinimo,
+        LocalDateTime fechaInicio,
+        LocalDateTime fechaFin
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\ReservaResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import java.time.LocalDateTime;
+
+public record ReservaResponse(
+        Long id,
+        Long espacioId,
+        String espacioNombre,
+        Long sesionId,
+        Long reservadoPorId,
+        LocalDateTime inicio,
+        LocalDateTime fin
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\ResumenAvanceResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+
+/** Fila del panel de seguimiento del manager (RF7). */
+public record ResumenAvanceResponse(
+        Long empleadoId,
+        String empleadoNombre,
+        int modulosTotales,
+        int modulosCompletados,
+        double porcentajeAvance,
+        Double promedioCalificacion,
+        int sesionesVerificadas,
+        boolean conAlertaActiva
+) {}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\RutaResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import java.util.List;
+
+public record RutaResponse(
+        Long id,
+        String nombre,
+        String descripcion,
+        Integer version,
+        Boolean activa,
+        List<ModuloResponse> modulos
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\SesionResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+
+import com.example.onboarding.enums.EstadoSesion;
+
+import java.time.LocalDateTime;
+
+public record SesionResponse(
+        Long id,
+        Long managerId,
+        String managerNombre,
+        Long empleadoId,
+        String empleadoNombre,
+        LocalDateTime fechaHora,
+        String enlaceTeams,
+        EstadoSesion estado,
+        String soporteUrl
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\dto\response\UsuarioResponse.java ==========
+
+package com.example.onboarding.dto.response;
+
+import com.example.onboarding.enums.Rol;
+
+import java.time.LocalDate;
+
+public record UsuarioResponse(
+        Long id,
+        String nombre,
+        String correo,
+        Rol rol,
+        String cargo,
+        LocalDate fechaIngreso,
+        Boolean activo,
+        Long managerId,
+        String managerNombre,
+        Long rutaId,
+        String rutaNombre
+) {}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\AlertaRezago.java ==========
+
+package com.example.onboarding.entity;
+
+import com.example.onboarding.enums.NivelAlerta;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "alertas_rezago")
+@Data
+@Builder
+public class AlertaRezago {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "empleado_id", nullable = false)
+    private Usuario empleado;
+
+    @Column(nullable = false, length = 300)
+    private String motivo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private NivelAlerta nivel;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fecha;
+
+    @PrePersist
+    void asignarFecha() {
+        if (fecha == null) {
+            fecha = LocalDateTime.now();
+        }
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\EspacioFisico.java ==========
+
+package com.example.onboarding.entity;
+
+
+import jakarta.persistence.*;
+import lombok.*;
+
+
+@Entity
+@Table(name = "espacios")
+@Data
+@Builder
+public class EspacioFisico {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String nombre;
+
+    @Column(nullable = false)
+    private Integer capacidad;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean activo = true;
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\Modulo.java ==========
+
+package com.example.onboarding.entity;
+
+
+import com.example.onboarding.enums.TipoModulo;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "modulos", uniqueConstraints = @UniqueConstraint(name = "uk_modulo_ruta_orden", columnNames = {"ruta_id", "orden"}))
+@Data
+@Builder
+public class Modulo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ruta_id", nullable = false)
+    private Ruta ruta;
+
+    @Column(nullable = false, length = 150)
+    private String titulo;
+
+    @Column(length = 500)
+    private String descripcion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private TipoModulo tipo;
+
+    /** PosiciÃ³n dentro de la ruta. Un mÃ³dulo se desbloquea al completar el anterior. */
+    @Column(nullable = false)
+    private Integer orden;
+
+    /** Identificador del curso o actividad en Moodle. */
+    @Column(nullable = false, length = 60)
+    private String idMoodle;
+
+    /** CalificaciÃ³n mÃ­nima (0 a 100) para dar el mÃ³dulo por completado. */
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer puntajeMinimo = 70;
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\ProgresoModulo.java ==========
+
+package com.example.onboarding.entity;
+
+
+import com.example.onboarding.enums.EstadoProgreso;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+/** Avance de un empleado en un mÃ³dulo. Hay una sola fila por pareja empleado-mÃ³dulo. */
+@Entity
+@Table(name = "progreso_modulo", uniqueConstraints = @UniqueConstraint(name = "uk_progreso_usuario_modulo", columnNames = {"usuario_id", "modulo_id"}))
+@Data
+@Builder
+public class ProgresoModulo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "modulo_id", nullable = false)
+    private Modulo modulo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private EstadoProgreso estado = EstadoProgreso.BLOQUEADO;
+
+    /** Ãšltima calificaciÃ³n reportada por Moodle (0 a 100). */
+    private Double calificacion;
+
+    private LocalDateTime fechaInicio;
+
+    private LocalDateTime fechaFin;
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\RegistroAuditoria.java ==========
+
+package com.example.onboarding.entity;
+
+import com.example.onboarding.enums.AccionAuditoria;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Immutable;
+
+import java.time.LocalDateTime;
+
+/**
+ * Registro de una acciÃ³n del proceso. Es de solo inserciÃ³n: Hibernate no emite
+ * UPDATE sobre esta entidad y ningÃºn campo es actualizable (RNF2).
+ * La protecciÃ³n definitiva se completa en la base de datos revocando UPDATE y DELETE.
+ */
+@Entity
+@Immutable
+@Table(name = "auditoria")
+@Data
+@Builder
+public class RegistroAuditoria {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false, updatable = false)
+    private Usuario usuario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, updatable = false, length = 30)
+    private AccionAuditoria accion;
+
+    /** Nombre de la entidad afectada, por ejemplo "Sesion" o "ProgresoModulo". */
+    @Column(nullable = false, updatable = false, length = 60)
+    private String entidad;
+
+    @Column(updatable = false)
+    private Long entidadId;
+
+    @Column(updatable = false, length = 1000)
+    private String detalle;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fechaHora;
+
+    @PrePersist
+    void asignarFecha() {
+        if (fechaHora == null) {
+            fechaHora = LocalDateTime.now();
+        }
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\Reserva.java ==========
+
+package com.example.onboarding.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+
+@Entity
+@Table(name = "reservas")
+@Data
+@Builder
+public class Reserva {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "espacio_id", nullable = false)
+    private EspacioFisico espacio;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sesion_id", unique = true)
+    private SesionSeguimiento sesion;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "reservado_por_id", nullable = false)
+    private Usuario reservadoPor;
+
+    @Column(nullable = false)
+    private LocalDateTime inicio;
+
+    @Column(nullable = false)
+    private LocalDateTime fin;
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\Ruta.java ==========
+
+package com.example.onboarding.entity;
+
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Entity
+@Table(name = "rutas")
+@Data
+@Builder
+public class Ruta {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 120)
+    private String nombre;
+
+    @Column(length = 500)
+    private String descripcion;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer version = 1;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean activa = true;
+
+    @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orden ASC")
+    @Builder.Default
+    private List<Modulo> modulos = new ArrayList<>();
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\SesionSeguimiento.java ==========
+
+package com.example.onboarding.entity;
+
+
+import com.example.onboarding.enums.EstadoSesion;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "sesiones")
+@Data
+@Builder
+public class SesionSeguimiento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "manager_id", nullable = false)
+    private Usuario manager;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "empleado_id", nullable = false)
+    private Usuario empleado;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaHora;
+
+    /** Enlace de la reuniÃ³n creada en Teams. */
+    @Column(length = 500)
+    private String enlaceTeams;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private EstadoSesion estado = EstadoSesion.PROGRAMADA;
+
+    /** UbicaciÃ³n del archivo que demuestra que la sesiÃ³n se realizÃ³. */
+    @Column(length = 500)
+    private String soporteUrl;
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\entity\Usuario.java ==========
+
+package com.example.onboarding.entity;
+
+
+
+import com.example.onboarding.enums.Rol;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "usuarios")
+@Data
+@Builder
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 120)
+    private String nombre;
+
+    @Column(nullable = false, unique = true, length = 160)
+    private String correo;
+
+    /** Hash BCrypt de la contraseÃ±a. */
+    @Column(nullable = false, length = 100)
+    private String contrasena;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Rol rol;
+
+    @Column(length = 100)
+    private String cargo;
+
+    private LocalDate fechaIngreso;
+
+    /** Identificador del usuario en Moodle, necesario para consultar sus calificaciones. */
+    @Column(length = 60)
+    private String idMoodle;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean activo = true;
+
+    /** Manager a cargo. Solo aplica a empleados. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    private Usuario manager;
+
+    /** Ruta de capacitaciÃ³n asignada. Solo aplica a empleados. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ruta_id")
+    private Ruta ruta;
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\enums\AccionAuditoria.java ==========
+
+package com.example.onboarding.enums;
+
+
+/** Acciones que quedan registradas en la auditorÃ­a (RF11). */
+public enum AccionAuditoria {
+    INICIO_SESION,
+    USUARIO_CREADO,
+    USUARIO_MODIFICADO,
+    RUTA_ASIGNADA,
+    MODULO_ABIERTO,
+    MODULO_COMPLETADO,
+    MODULO_EN_REFUERZO,
+    SESION_AGENDADA,
+    SESION_REPROGRAMADA,
+    SESION_CANCELADA,
+    SESION_REALIZADA,
+    SESION_VERIFICADA,
+    RESERVA_CREADA,
+    ALERTA_GENERADA,
+    PLANILLA_EXPORTADA
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\enums\EstadoProgreso.java ==========
+
+package com.example.onboarding.enums;
+
+/**
+ * Ciclo de vida de un mÃ³dulo para un empleado.
+ * BLOQUEADO -> DISPONIBLE -> EN_CURSO -> COMPLETADO (o EN_REFUERZO y vuelta a EN_CURSO).
+ */
+public enum EstadoProgreso {
+    BLOQUEADO,
+    DISPONIBLE,
+    EN_CURSO,
+    EN_REFUERZO,
+    COMPLETADO
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\enums\EstadoSesion.java ==========
+
+package com.example.onboarding.enums;
+
+/** Ciclo de vida de una sesiÃ³n de seguimiento. */
+public enum EstadoSesion {
+    PROGRAMADA,
+    CANCELADA,
+    REALIZADA,
+    /** La sesiÃ³n tiene soporte adjunto y cuenta para el mÃ­nimo exigido en la auditorÃ­a. */
+    VERIFICADA
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\enums\NivelAlerta.java ==========
+
+package com.example.onboarding.enums;
+
+/** Gravedad de una alerta de rezago generada por el motor de IA. */
+public enum NivelAlerta {
+    BAJO,
+    MEDIO,
+    ALTO
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\enums\Rol.java ==========
+
+package com.example.onboarding.enums;
+
+
+
+/** Rol del usuario dentro de la plataforma. Determina quÃ© funciones ve en la app. */
+public enum Rol {
+    EMPLEADO,
+    MANAGER,
+    ADMINISTRADOR
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\enums\TipoModulo.java ==========
+
+package com.example.onboarding.enums;
+
+/** Formato principal del contenido de un mÃ³dulo alojado en Moodle. */
+public enum TipoModulo {
+    VIDEO,
+    LECTURA,
+    EVALUACION
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\exception\AccesoDenegadoException.java ==========
+
+package com.example.onboarding.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.FORBIDDEN)
+public class AccesoDenegadoException extends RuntimeException {
+    public AccesoDenegadoException(String mensaje) {
+        super(mensaje);
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\exception\GlobalExceptionHandler.java ==========
+
+package com.example.onboarding.exception;
+
+import com.example.onboarding.dto.response.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> noEncontrado(RecursoNoEncontradoException ex) {
+        return construir(HttpStatus.NOT_FOUND, ex.getMessage(), List.of());
+    }
+
+    @ExceptionHandler(ReglaNegocioException.class)
+    public ResponseEntity<ErrorResponse> reglaNegocio(ReglaNegocioException ex) {
+        return construir(HttpStatus.BAD_REQUEST, ex.getMessage(), List.of());
+    }
+
+    @ExceptionHandler(AccesoDenegadoException.class)
+    public ResponseEntity<ErrorResponse> accesoDenegado(AccesoDenegadoException ex) {
+        return construir(HttpStatus.FORBIDDEN, ex.getMessage(), List.of());
+    }
+
+    /** Lo lanza @PreAuthorize cuando el rol no alcanza. Sin este handler caerÃ­a en el 500 genÃ©rico. */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> sinPermiso(AccessDeniedException ex) {
+        return construir(HttpStatus.FORBIDDEN, "No tienes permiso para realizar esta acciÃ³n", List.of());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> validacion(MethodArgumentNotValidException ex) {
+        List<String> detalles = ex.getBindingResult().getFieldErrors().stream()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .toList();
+        return construir(HttpStatus.BAD_REQUEST, "Hay datos invÃ¡lidos en la peticiÃ³n", detalles);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> cuerpoInvalido(HttpMessageNotReadableException ex) {
+        return construir(HttpStatus.BAD_REQUEST,
+                "El cuerpo de la peticiÃ³n no es vÃ¡lido (revisa el JSON, las fechas y los valores de los enums)",
+                List.of());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> parametroInvalido(MethodArgumentTypeMismatchException ex) {
+        return construir(HttpStatus.BAD_REQUEST, "El parÃ¡metro '" + ex.getName() + "' no tiene un formato vÃ¡lido",
+                List.of());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> integridad(DataIntegrityViolationException ex) {
+        log.warn("ViolaciÃ³n de integridad de datos", ex);
+        return construir(HttpStatus.CONFLICT, "La operaciÃ³n entra en conflicto con datos existentes", List.of());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> inesperado(Exception ex) {
+        log.error("Error no controlado", ex);
+        return construir(HttpStatus.INTERNAL_SERVER_ERROR, "OcurriÃ³ un error inesperado", List.of());
+    }
+
+    private ResponseEntity<ErrorResponse> construir(HttpStatus status, String mensaje, List<String> detalles) {
+        ErrorResponse cuerpo = new ErrorResponse(
+                LocalDateTime.now(), status.value(), status.getReasonPhrase(), mensaje, detalles);
+        return ResponseEntity.status(status).body(cuerpo);
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\exception\RecursoNoEncontradoException.java ==========
+
+package com.example.onboarding.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class RecursoNoEncontradoException extends RuntimeException {
+    public RecursoNoEncontradoException(String mensaje) {
+        super(mensaje);
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\exception\ReglaNegocioException.java ==========
+
+package com.example.onboarding.exception;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class ReglaNegocioException extends RuntimeException {
+    public ReglaNegocioException(String mensaje) {
+        super(mensaje);
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\integration\MoodleClient.java ==========
+
+package com.example.onboarding.integration;
+
+
+public interface MoodleClient {
+
+    /** Devuelve la calificaciÃ³n (0 a 100) del usuario en la actividad, o null si aÃºn no existe. */
+    Double consultarCalificacion(String idUsuarioMoodle, String idActividadMoodle);
+
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\integration\MoodleClientSimulado.java ==========
+
+package com.example.onboarding.integration;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+/** SOLO PARA DESARROLLO: reemplazar por la integraciÃ³n real con los web services de Moodle. */
+@Slf4j
+@Component
+public class MoodleClientSimulado implements MoodleClient {
+
+    @Override
+    public Double consultarCalificacion(String idUsuarioMoodle, String idActividadMoodle) {
+        log.warn("Moodle SIMULADO: devolviendo 100 para usuario {} en actividad {}",
+                idUsuarioMoodle, idActividadMoodle);
+        return 100.0;
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\integration\TeamsClient.java ==========
+
+package com.example.onboarding.integration;
+
+import java.time.LocalDateTime;
+
+public interface TeamsClient {
+
+    /** Crea la reuniÃ³n en Teams y devuelve el enlace para unirse. */
+    String crearReunion(String asunto, LocalDateTime inicio, LocalDateTime fin,
+                        String correoManager, String correoEmpleado);
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\integration\TeamsClientSimulado.java ==========
+
+package com.example.onboarding.integration;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+/** SOLO PARA DESARROLLO: reemplazar por la integraciÃ³n real con Microsoft Graph. */
+@Slf4j
+@Component
+public class TeamsClientSimulado implements TeamsClient {
+
+    @Override
+    public String crearReunion(String asunto, LocalDateTime inicio, LocalDateTime fin,
+                               String correoManager, String correoEmpleado) {
+        log.warn("Teams SIMULADO: reuniÃ³n '{}' el {}", asunto, inicio);
+        return "https://teams.microsoft.com/l/meetup-join/simulado-" + UUID.randomUUID();
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\mapper\EntityMapper.java ==========
+
+package com.example.onboarding.mapper;
+
+import com.example.onboarding.dto.response.*;
+import com.example.onboarding.entity.*;
+import org.springframework.stereotype.Component;
+
+/** Convierte entities en DTOs de respuesta. Debe usarse dentro de una transacciÃ³n (relaciones lazy). */
+@Component
+public class EntityMapper {
+
+    public UsuarioResponse toUsuarioResponse(Usuario u) {
+        Usuario m = u.getManager();
+        Ruta r = u.getRuta();
+        return new UsuarioResponse(
+                u.getId(), u.getNombre(), u.getCorreo(), u.getRol(), u.getCargo(),
+                u.getFechaIngreso(), u.getActivo(),
+                m != null ? m.getId() : null, m != null ? m.getNombre() : null,
+                r != null ? r.getId() : null, r != null ? r.getNombre() : null);
+    }
+
+    public ModuloResponse toModuloResponse(Modulo m) {
+        return new ModuloResponse(m.getId(), m.getRuta().getId(), m.getTitulo(), m.getDescripcion(),
+                m.getTipo(), m.getOrden(), m.getPuntajeMinimo());
+    }
+
+    public RutaResponse toRutaResponse(Ruta r) {
+        return new RutaResponse(r.getId(), r.getNombre(), r.getDescripcion(), r.getVersion(), r.getActiva(),
+                r.getModulos().stream().map(this::toModuloResponse).toList());
+    }
+
+    public ProgresoModuloResponse toProgresoResponse(ProgresoModulo p) {
+        Modulo m = p.getModulo();
+        return new ProgresoModuloResponse(p.getId(), m.getId(), m.getTitulo(), m.getOrden(), p.getEstado(),
+                p.getCalificacion(), m.getPuntajeMinimo(), p.getFechaInicio(), p.getFechaFin());
+    }
+
+    public SesionResponse toSesionResponse(SesionSeguimiento s) {
+        return new SesionResponse(s.getId(),
+                s.getManager().getId(), s.getManager().getNombre(),
+                s.getEmpleado().getId(), s.getEmpleado().getNombre(),
+                s.getFechaHora(), s.getEnlaceTeams(), s.getEstado(), s.getSoporteUrl());
+    }
+
+    public EspacioResponse toEspacioResponse(EspacioFisico e) {
+        return new EspacioResponse(e.getId(), e.getNombre(), e.getCapacidad(), e.getActivo());
+    }
+
+    public ReservaResponse toReservaResponse(Reserva r) {
+        return new ReservaResponse(r.getId(), r.getEspacio().getId(), r.getEspacio().getNombre(),
+                r.getSesion() != null ? r.getSesion().getId() : null,
+                r.getReservadoPor().getId(), r.getInicio(), r.getFin());
+    }
+
+    public AlertaRezagoResponse toAlertaResponse(AlertaRezago a) {
+        return new AlertaRezagoResponse(a.getId(), a.getEmpleado().getId(), a.getEmpleado().getNombre(),
+                a.getMotivo(), a.getNivel(), a.getFecha());
+    }
+
+    public AuditoriaResponse toAuditoriaResponse(RegistroAuditoria a) {
+        return new AuditoriaResponse(a.getId(), a.getUsuario().getId(), a.getUsuario().getNombre(),
+                a.getAccion(), a.getEntidad(), a.getEntidadId(), a.getDetalle(), a.getFechaHora());
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\AlertaRezagoRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.AlertaRezago;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface AlertaRezagoRepository extends JpaRepository<AlertaRezago, Long> {
+
+    List<AlertaRezago> findByEmpleadoIdOrderByFechaDesc(Long empleadoId);
+
+    /** Alertas de todos los empleados de un manager. */
+    List<AlertaRezago> findByEmpleadoManagerIdOrderByFechaDesc(Long managerId);
+
+    /** Sirve para marcar "con alerta reciente" en el panel y para no duplicar alertas. */
+    boolean existsByEmpleadoIdAndFechaAfter(Long empleadoId, LocalDateTime desde);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\EspacioFisicoRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.EspacioFisico;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface EspacioFisicoRepository extends JpaRepository<EspacioFisico, Long> {
+
+    List<EspacioFisico> findByActivoTrue();
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\ModuloRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.Modulo;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ModuloRepository extends JpaRepository<Modulo, Long> {
+
+    List<Modulo> findByRutaIdOrderByOrdenAsc(Long rutaId);
+
+    boolean existsByRutaIdAndOrden(Long rutaId, Integer orden);
+
+    /** MÃ³dulo que sigue al actual: es el que se desbloquea al completar este (RF2). */
+    Optional<Modulo> findFirstByRutaIdAndOrdenGreaterThanOrderByOrdenAsc(Long rutaId, Integer orden);
+
+    /** Primer mÃ³dulo de la ruta, el que queda disponible al asignarla. */
+    Optional<Modulo> findFirstByRutaIdOrderByOrdenAsc(Long rutaId);
+
+    long countByRutaId(Long rutaId);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\ProgresoModuloRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.ProgresoModulo;
+import com.example.onboarding.enums.EstadoProgreso;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ProgresoModuloRepository extends JpaRepository<ProgresoModulo, Long> {
+
+    /** Ruta del empleado con el estado de cada mÃ³dulo, en orden. */
+    List<ProgresoModulo> findByUsuarioIdOrderByModuloOrdenAsc(Long usuarioId);
+
+    Optional<ProgresoModulo> findByUsuarioIdAndModuloId(Long usuarioId, Long moduloId);
+
+    long countByUsuarioIdAndEstado(Long usuarioId, EstadoProgreso estado);
+
+    long countByUsuarioId(Long usuarioId);
+
+    /** Promedio de calificaciones del empleado; null si aÃºn no tiene ninguna. */
+    @Query("""
+            select avg(p.calificacion) from ProgresoModulo p
+            where p.usuario.id = :usuarioId and p.calificacion is not null
+            """)
+    Double promedioCalificacion(@Param("usuarioId") Long usuarioId);
+
+    boolean existsByModuloId(Long moduloId);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\RegistroAuditoriaRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.RegistroAuditoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.Repository;
+
+import java.time.LocalDateTime;
+
+/**
+ * Extiende Repository y no JpaRepository a propÃ³sito: asÃ­ no existen delete ni deleteAll,
+ * y la auditorÃ­a queda de solo inserciÃ³n y consulta (RNF2).
+ */
+public interface RegistroAuditoriaRepository extends Repository<RegistroAuditoria, Long> {
+
+    <S extends RegistroAuditoria> S save(S registro);
+
+    Page<RegistroAuditoria> findAll(Pageable pageable);
+
+    Page<RegistroAuditoria> findByUsuarioId(Long usuarioId, Pageable pageable);
+
+    Page<RegistroAuditoria> findByEntidadAndEntidadId(String entidad, Long entidadId, Pageable pageable);
+
+    Page<RegistroAuditoria> findByFechaHoraBetween(LocalDateTime desde, LocalDateTime hasta, Pageable pageable);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\ReservaRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.Reserva;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+public interface ReservaRepository extends JpaRepository<Reserva, Long> {
+
+    /** Indica si el espacio ya estÃ¡ reservado en algÃºn momento del rango pedido. */
+    @Query("""
+            select count(r) > 0 from Reserva r
+            where r.espacio.id = :espacioId
+              and r.inicio < :fin
+              and r.fin > :inicio
+            """)
+    boolean existeCruce(@Param("espacioId") Long espacioId,
+                        @Param("inicio") LocalDateTime inicio,
+                        @Param("fin") LocalDateTime fin);
+
+    Optional<Reserva> findBySesionId(Long sesionId);
+
+    List<Reserva> findByReservadoPorIdOrderByInicioDesc(Long usuarioId);
+
+    List<Reserva> findByEspacioIdAndInicioBetweenOrderByInicioAsc(Long espacioId, LocalDateTime desde, LocalDateTime hasta);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\RutaRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.Ruta;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface RutaRepository extends JpaRepository<Ruta, Long> {
+
+    List<Ruta> findByActivaTrue();
+
+    /** Carga la ruta junto con sus mÃ³dulos en una sola consulta. */
+    @EntityGraph(attributePaths = "modulos")
+    Optional<Ruta> findConModulosById(Long id);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\SesionSeguimientoRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.SesionSeguimiento;
+import com.example.onboarding.enums.EstadoSesion;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface SesionSeguimientoRepository extends JpaRepository<SesionSeguimiento, Long> {
+
+    List<SesionSeguimiento> findByEmpleadoIdOrderByFechaHoraDesc(Long empleadoId);
+
+    List<SesionSeguimiento> findByManagerIdOrderByFechaHoraDesc(Long managerId);
+
+    /** Sesiones que cuentan para la auditorÃ­a (mÃ­nimo 5). */
+    long countByEmpleadoIdAndEstado(Long empleadoId, EstadoSesion estado);
+
+    /** Sesiones agendadas sin contar las canceladas, para respetar el mÃ¡ximo de 10. */
+    long countByEmpleadoIdAndEstadoNot(Long empleadoId, EstadoSesion estado);
+
+    /** Evita que el manager tenga dos sesiones a la misma hora. */
+    boolean existsByManagerIdAndFechaHoraAndEstado(Long managerId, LocalDateTime fechaHora, EstadoSesion estado);
+
+    /** Evidencia para la planilla de cumplimiento (RF12). */
+    List<SesionSeguimiento> findByEmpleadoIdAndEstadoOrderByFechaHoraAsc(Long empleadoId, EstadoSesion estado);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\repository\UsuarioRepository.java ==========
+
+package com.example.onboarding.repository;
+
+import com.example.onboarding.entity.Usuario;
+import com.example.onboarding.enums.Rol;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
+    /** Login y validaciÃ³n de correo Ãºnico. */
+    Optional<Usuario> findByCorreo(String correo);
+
+    boolean existsByCorreo(String correo);
+
+    /** Empleados a cargo de un manager (panel de seguimiento, RF7). */
+    List<Usuario> findByManagerIdAndActivoTrue(Long managerId);
+
+    List<Usuario> findByRol(Rol rol);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\AlertaRezagoService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.response.AlertaRezagoResponse;
+import com.example.onboarding.enums.NivelAlerta;
+
+import java.util.List;
+
+public interface AlertaRezagoService {
+
+    /** Lo invoca el motor de IA cuando detecta rezago. */
+    AlertaRezagoResponse generar(Long empleadoId, String motivo, NivelAlerta nivel);
+
+    List<AlertaRezagoResponse> listarPorEmpleado(Long empleadoId);
+
+    List<AlertaRezagoResponse> listarPorManager(Long managerId);
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\AuditoriaService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.response.AuditoriaResponse;
+import com.example.onboarding.enums.AccionAuditoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+public interface AuditoriaService {
+
+    void registrar(Long usuarioId, AccionAuditoria accion, String entidad, Long entidadId, String detalle);
+
+    Page<AuditoriaResponse> consultar(Pageable pageable);
+
+    Page<AuditoriaResponse> consultarPorUsuario(Long usuarioId, Pageable pageable);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\EspacioService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.request.EspacioRequest;
+import com.example.onboarding.dto.response.EspacioResponse;
+
+import java.util.List;
+
+public interface EspacioService {
+
+    EspacioResponse crear(EspacioRequest request);
+
+    EspacioResponse actualizar(Long id, EspacioRequest request);
+
+    EspacioResponse obtener(Long id);
+
+    List<EspacioResponse> listarActivos();
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\ModuloService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.request.ModuloRequest;
+import com.example.onboarding.dto.response.ModuloResponse;
+
+import java.util.List;
+
+public interface ModuloService {
+
+    ModuloResponse crear(ModuloRequest request);
+
+    ModuloResponse actualizar(Long id, ModuloRequest request);
+
+    void eliminar(Long id);
+
+    List<ModuloResponse> listarPorRuta(Long rutaId);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\ProgresoService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.request.ReportarAvanceRequest;
+import com.example.onboarding.dto.response.ProgresoModuloResponse;
+import com.example.onboarding.dto.response.ResumenAvanceResponse;
+
+import java.util.List;
+
+public interface ProgresoService {
+
+    /** Crea el progreso de los mÃ³dulos que falten en la ruta actual del usuario. Es idempotente. */
+    void sincronizarRuta(Long usuarioId);
+
+    /** Ruta del empleado con el estado de cada mÃ³dulo (RF2). */
+    List<ProgresoModuloResponse> listarRuta(Long usuarioId);
+
+    /** Ruta de un empleado vista por su manager. */
+    List<ProgresoModuloResponse> listarRutaDeEmpleado(Long managerId, Long empleadoId);
+
+    /** El empleado abre un mÃ³dulo disponible; pasa a EN_CURSO. */
+    ProgresoModuloResponse abrirModulo(Long usuarioId, Long moduloId);
+
+    /** El empleado termina el mÃ³dulo; el servidor consulta la nota en Moodle (RF3, RF4). */
+    ProgresoModuloResponse reportarAvance(Long usuarioId, ReportarAvanceRequest request);
+
+    /** Panel de seguimiento del manager (RF7). */
+    List<ResumenAvanceResponse> resumenEquipo(Long managerId);
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\ReservaService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.request.ReservaRequest;
+import com.example.onboarding.dto.response.ReservaResponse;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface ReservaService {
+
+    ReservaResponse crear(Long usuarioId, ReservaRequest request);
+
+    /** Libera la reserva asociada a una sesiÃ³n, si existe. */
+    void liberarPorSesion(Long sesionId);
+
+    List<ReservaResponse> listarPorUsuario(Long usuarioId);
+
+    List<ReservaResponse> listarPorEspacio(Long espacioId, LocalDateTime desde, LocalDateTime hasta);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\RutaService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.request.RutaRequest;
+import com.example.onboarding.dto.response.RutaResponse;
+
+import java.util.List;
+
+public interface RutaService {
+
+    RutaResponse crear(RutaRequest request);
+
+    RutaResponse actualizar(Long id, RutaRequest request);
+
+    RutaResponse obtener(Long id);
+
+    List<RutaResponse> listarActivas();
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\SesionService.java ==========
+
+package com.example.onboarding.service;
+
+import com.example.onboarding.dto.request.SesionRequest;
+import com.example.onboarding.dto.request.SesionSoporteRequest;
+import com.example.onboarding.dto.response.SesionResponse;
+
+import java.util.List;
+
+public interface SesionService {
+
+    SesionResponse agendar(Long managerId, SesionRequest request);
+
+    SesionResponse reprogramar(Long managerId, Long sesionId, SesionRequest request);
+
+    SesionResponse cancelar(Long managerId, Long sesionId);
+
+    SesionResponse marcarRealizada(Long managerId, Long sesionId);
+
+    /** Adjunta el soporte y deja la sesiÃ³n VERIFICADA. */
+    SesionResponse adjuntarSoporte(Long managerId, Long sesionId, SesionSoporteRequest request);
+
+    SesionResponse obtener(Long sesionId);
+
+    List<SesionResponse> listarPorManager(Long managerId);
+
+    List<SesionResponse> listarPorEmpleado(Long empleadoId);
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\service\UsuarioService.java ==========
+
+package com.example.onboarding.service;
+
+
+import com.example.onboarding.dto.request.UsuarioRequest;
+import com.example.onboarding.dto.response.UsuarioResponse;
+
+import java.util.List;
+
+public interface UsuarioService {
+
+    UsuarioResponse crear(Long actorId, UsuarioRequest request);
+
+    /** Reemplaza los datos del usuario. Si no viene contraseÃ±a se conserva la actual. */
+    UsuarioResponse actualizar(Long actorId, Long id, UsuarioRequest request);
+
+    void desactivar(Long actorId, Long id);
+
+    UsuarioResponse obtener(Long id);
+
+    List<UsuarioResponse> listar();
+
+    List<UsuarioResponse> listarEmpleadosDeManager(Long managerId);
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\AlertaRezagoServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.response.AlertaRezagoResponse;
+import com.example.onboarding.entity.AlertaRezago;
+import com.example.onboarding.entity.Usuario;
+import com.example.onboarding.enums.AccionAuditoria;
+import com.example.onboarding.enums.NivelAlerta;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.AlertaRezagoRepository;
+import com.example.onboarding.repository.UsuarioRepository;
+import com.example.onboarding.service.AlertaRezagoService;
+import com.example.onboarding.service.AuditoriaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AlertaRezagoServiceImpl implements AlertaRezagoService {
+
+
+    private static final int MAX_MOTIVO = 300;
+
+    private final AlertaRezagoRepository alertaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final AuditoriaService auditoriaService;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public AlertaRezagoResponse generar(Long empleadoId, String motivo, NivelAlerta nivel) {
+        Usuario empleado = usuarioRepository.findById(empleadoId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + empleadoId));
+        if (motivo.length() > MAX_MOTIVO) {
+            motivo = motivo.substring(0, MAX_MOTIVO);
+        }
+        AlertaRezago alerta = alertaRepository.save(AlertaRezago.builder()
+                .empleado(empleado)
+                .motivo(motivo)
+                .nivel(nivel)
+                .build());
+
+        // AcciÃ³n del sistema: se registra a nombre del empleado afectado.
+        auditoriaService.registrar(empleadoId, AccionAuditoria.ALERTA_GENERADA, "AlertaRezago", alerta.getId(),
+                "Generada por el sistema (" + nivel + "): " + motivo);
+        return mapper.toAlertaResponse(alerta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AlertaRezagoResponse> listarPorEmpleado(Long empleadoId) {
+        return alertaRepository.findByEmpleadoIdOrderByFechaDesc(empleadoId).stream()
+                .map(mapper::toAlertaResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AlertaRezagoResponse> listarPorManager(Long managerId) {
+        return alertaRepository.findByEmpleadoManagerIdOrderByFechaDesc(managerId).stream()
+                .map(mapper::toAlertaResponse).toList();
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\AuditoriaServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.response.AuditoriaResponse;
+import com.example.onboarding.entity.RegistroAuditoria;
+import com.example.onboarding.enums.AccionAuditoria;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.RegistroAuditoriaRepository;
+import com.example.onboarding.repository.UsuarioRepository;
+import com.example.onboarding.service.AuditoriaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class AuditoriaServiceImpl implements AuditoriaService {
+    private static final int MAX_DETALLE = 1000;
+
+    private final RegistroAuditoriaRepository auditoriaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public void registrar(Long usuarioId, AccionAuditoria accion, String entidad, Long entidadId, String detalle) {
+        if (detalle != null && detalle.length() > MAX_DETALLE) {
+            detalle = detalle.substring(0, MAX_DETALLE);
+        }
+        RegistroAuditoria registro = RegistroAuditoria.builder()
+                .usuario(usuarioRepository.getReferenceById(usuarioId))
+                .accion(accion)
+                .entidad(entidad)
+                .entidadId(entidadId)
+                .detalle(detalle)
+                .build();
+        auditoriaRepository.save(registro);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AuditoriaResponse> consultar(Pageable pageable) {
+        return auditoriaRepository.findAll(pageable).map(mapper::toAuditoriaResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AuditoriaResponse> consultarPorUsuario(Long usuarioId, Pageable pageable) {
+        return auditoriaRepository.findByUsuarioId(usuarioId, pageable).map(mapper::toAuditoriaResponse);
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\EspacioServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.request.EspacioRequest;
+import com.example.onboarding.dto.response.EspacioResponse;
+import com.example.onboarding.entity.EspacioFisico;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.EspacioFisicoRepository;
+import com.example.onboarding.service.EspacioService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class EspacioServiceImpl implements EspacioService {
+
+    private final EspacioFisicoRepository espacioRepository;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public EspacioResponse crear(EspacioRequest request) {
+        EspacioFisico espacio = EspacioFisico.builder()
+                .nombre(request.nombre().trim())
+                .capacidad(request.capacidad())
+                .activo(request.activo() == null || request.activo())
+                .build();
+        return mapper.toEspacioResponse(espacioRepository.save(espacio));
+    }
+
+    @Override
+    @Transactional
+    public EspacioResponse actualizar(Long id, EspacioRequest request) {
+        EspacioFisico espacio = buscar(id);
+        espacio.setNombre(request.nombre().trim());
+        espacio.setCapacidad(request.capacidad());
+        if (request.activo() != null) {
+            espacio.setActivo(request.activo());
+        }
+        return mapper.toEspacioResponse(espacioRepository.save(espacio));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EspacioResponse obtener(Long id) {
+        return mapper.toEspacioResponse(buscar(id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EspacioResponse> listarActivos() {
+        return espacioRepository.findByActivoTrue().stream().map(mapper::toEspacioResponse).toList();
+    }
+
+    private EspacioFisico buscar(Long id) {
+        return espacioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espacio no encontrado: " + id));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\ModuloServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.request.ModuloRequest;
+import com.example.onboarding.dto.response.ModuloResponse;
+import com.example.onboarding.entity.Modulo;
+import com.example.onboarding.entity.Ruta;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.exception.ReglaNegocioException;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.ModuloRepository;
+import com.example.onboarding.repository.ProgresoModuloRepository;
+import com.example.onboarding.repository.RutaRepository;
+import com.example.onboarding.service.ModuloService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ModuloServiceImpl implements ModuloService {
+
+
+    private static final int PUNTAJE_POR_DEFECTO = 70;
+
+    private final ModuloRepository moduloRepository;
+    private final RutaRepository rutaRepository;
+    private final ProgresoModuloRepository progresoRepository;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public ModuloResponse crear(ModuloRequest request) {
+        Ruta ruta = rutaRepository.findById(request.rutaId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ruta no encontrada: " + request.rutaId()));
+        if (moduloRepository.existsByRutaIdAndOrden(ruta.getId(), request.orden())) {
+            throw new ReglaNegocioException("Ya existe un mÃ³dulo en la posiciÃ³n " + request.orden() + " de esta ruta");
+        }
+        Modulo modulo = Modulo.builder()
+                .ruta(ruta)
+                .titulo(request.titulo().trim())
+                .descripcion(request.descripcion())
+                .tipo(request.tipo())
+                .orden(request.orden())
+                .idMoodle(request.idMoodle())
+                .puntajeMinimo(request.puntajeMinimo() != null ? request.puntajeMinimo() : PUNTAJE_POR_DEFECTO)
+                .build();
+        return mapper.toModuloResponse(moduloRepository.save(modulo));
+    }
+
+    @Override
+    @Transactional
+    public ModuloResponse actualizar(Long id, ModuloRequest request) {
+        Modulo modulo = buscar(id);
+        if (!modulo.getRuta().getId().equals(request.rutaId())) {
+            throw new ReglaNegocioException("No se puede mover un mÃ³dulo a otra ruta");
+        }
+        if (!modulo.getOrden().equals(request.orden())
+                && moduloRepository.existsByRutaIdAndOrden(request.rutaId(), request.orden())) {
+            throw new ReglaNegocioException("Ya existe un mÃ³dulo en la posiciÃ³n " + request.orden() + " de esta ruta");
+        }
+        modulo.setTitulo(request.titulo().trim());
+        modulo.setDescripcion(request.descripcion());
+        modulo.setTipo(request.tipo());
+        modulo.setOrden(request.orden());
+        modulo.setIdMoodle(request.idMoodle());
+        if (request.puntajeMinimo() != null) {
+            modulo.setPuntajeMinimo(request.puntajeMinimo());
+        }
+        return mapper.toModuloResponse(moduloRepository.save(modulo));
+    }
+
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+        Modulo modulo = buscar(id);
+        if (progresoRepository.existsByModuloId(id)) {
+            throw new ReglaNegocioException("El mÃ³dulo ya tiene avances registrados y no se puede eliminar");
+        }
+        moduloRepository.delete(modulo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ModuloResponse> listarPorRuta(Long rutaId) {
+        return moduloRepository.findByRutaIdOrderByOrdenAsc(rutaId).stream()
+                .map(mapper::toModuloResponse).toList();
+    }
+
+    private Modulo buscar(Long id) {
+        return moduloRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("MÃ³dulo no encontrado: " + id));
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\ProgresoServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.request.ReportarAvanceRequest;
+import com.example.onboarding.dto.response.ProgresoModuloResponse;
+import com.example.onboarding.dto.response.ResumenAvanceResponse;
+import com.example.onboarding.entity.Modulo;
+import com.example.onboarding.entity.ProgresoModulo;
+import com.example.onboarding.entity.Usuario;
+import com.example.onboarding.enums.AccionAuditoria;
+import com.example.onboarding.enums.EstadoProgreso;
+import com.example.onboarding.enums.EstadoSesion;
+import com.example.onboarding.exception.AccesoDenegadoException;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.exception.ReglaNegocioException;
+import com.example.onboarding.integration.MoodleClient;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.AlertaRezagoRepository;
+import com.example.onboarding.repository.ModuloRepository;
+import com.example.onboarding.repository.ProgresoModuloRepository;
+import com.example.onboarding.repository.SesionSeguimientoRepository;
+import com.example.onboarding.repository.UsuarioRepository;
+import com.example.onboarding.service.AuditoriaService;
+import com.example.onboarding.service.ProgresoService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ProgresoServiceImpl implements ProgresoService {
+
+
+    private static final int DIAS_ALERTA_RECIENTE = 7;
+
+    private final ProgresoModuloRepository progresoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ModuloRepository moduloRepository;
+    private final SesionSeguimientoRepository sesionRepository;
+    private final AlertaRezagoRepository alertaRepository;
+    private final MoodleClient moodleClient;
+    private final AuditoriaService auditoriaService;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public void sincronizarRuta(Long usuarioId) {
+        Usuario usuario = buscarUsuario(usuarioId);
+        if (usuario.getRuta() == null) {
+            return;
+        }
+        List<Modulo> modulos = moduloRepository.findByRutaIdOrderByOrdenAsc(usuario.getRuta().getId());
+        Map<Long, ProgresoModulo> existentes = progresoRepository.findByUsuarioIdOrderByModuloOrdenAsc(usuarioId)
+                .stream()
+                .collect(Collectors.toMap(p -> p.getModulo().getId(), Function.identity(), (a, b) -> a));
+
+        List<ProgresoModulo> nuevos = new ArrayList<>();
+        boolean anteriorCompletado = true;
+        for (Modulo modulo : modulos) {
+            ProgresoModulo progreso = existentes.get(modulo.getId());
+            if (progreso == null) {
+                progreso = ProgresoModulo.builder()
+                        .usuario(usuario)
+                        .modulo(modulo)
+                        .estado(anteriorCompletado ? EstadoProgreso.DISPONIBLE : EstadoProgreso.BLOQUEADO)
+                        .build();
+                nuevos.add(progreso);
+            }
+            anteriorCompletado = progreso.getEstado() == EstadoProgreso.COMPLETADO;
+        }
+        progresoRepository.saveAll(nuevos);
+    }
+
+    @Override
+    @Transactional
+    public List<ProgresoModuloResponse> listarRuta(Long usuarioId) {
+        sincronizarRuta(usuarioId);
+        Usuario usuario = buscarUsuario(usuarioId);
+        return progresoDeRutaActual(usuario).stream().map(mapper::toProgresoResponse).toList();
+    }
+
+    @Override
+    @Transactional
+    public List<ProgresoModuloResponse> listarRutaDeEmpleado(Long managerId, Long empleadoId) {
+        Usuario empleado = buscarUsuario(empleadoId);
+        if (empleado.getManager() == null || !empleado.getManager().getId().equals(managerId)) {
+            throw new AccesoDenegadoException("El empleado no estÃ¡ a tu cargo");
+        }
+        return listarRuta(empleadoId);
+    }
+
+    @Override
+    @Transactional
+    public ProgresoModuloResponse abrirModulo(Long usuarioId, Long moduloId) {
+        ProgresoModulo progreso = obtenerProgreso(usuarioId, moduloId);
+
+        if (progreso.getEstado() == EstadoProgreso.BLOQUEADO) {
+            throw new ReglaNegocioException("Debes completar el mÃ³dulo anterior para abrir este");
+        }
+        if (progreso.getEstado() == EstadoProgreso.DISPONIBLE || progreso.getEstado() == EstadoProgreso.EN_REFUERZO) {
+            progreso.setEstado(EstadoProgreso.EN_CURSO);
+            if (progreso.getFechaInicio() == null) {
+                progreso.setFechaInicio(LocalDateTime.now());
+            }
+            progreso = progresoRepository.save(progreso);
+        }
+        auditoriaService.registrar(usuarioId, AccionAuditoria.MODULO_ABIERTO, "ProgresoModulo", progreso.getId(),
+                "MÃ³dulo abierto: " + progreso.getModulo().getTitulo());
+        return mapper.toProgresoResponse(progreso);
+    }
+
+    @Override
+    @Transactional
+    public ProgresoModuloResponse reportarAvance(Long usuarioId, ReportarAvanceRequest request) {
+        Usuario usuario = buscarUsuario(usuarioId);
+        ProgresoModulo progreso = obtenerProgreso(usuarioId, request.moduloId());
+
+        if (progreso.getEstado() != EstadoProgreso.EN_CURSO) {
+            throw new ReglaNegocioException("Debes abrir el mÃ³dulo antes de reportar el avance");
+        }
+        if (usuario.getIdMoodle() == null || usuario.getIdMoodle().isBlank()) {
+            throw new ReglaNegocioException("El usuario no tiene un identificador de Moodle asignado");
+        }
+
+        Modulo modulo = progreso.getModulo();
+        Double nota = moodleClient.consultarCalificacion(usuario.getIdMoodle(), modulo.getIdMoodle());
+        if (nota == null) {
+            throw new ReglaNegocioException("Moodle aÃºn no reporta una calificaciÃ³n para este mÃ³dulo");
+        }
+        progreso.setCalificacion(nota);
+
+        if (nota >= modulo.getPuntajeMinimo()) {
+            progreso.setEstado(EstadoProgreso.COMPLETADO);
+            progreso.setFechaFin(LocalDateTime.now());
+            progreso = progresoRepository.save(progreso);
+            desbloquearSiguiente(usuario, modulo);
+            auditoriaService.registrar(usuarioId, AccionAuditoria.MODULO_COMPLETADO, "ProgresoModulo",
+                    progreso.getId(), "MÃ³dulo completado: " + modulo.getTitulo() + " (nota " + nota + ")");
+        } else {
+            progreso.setEstado(EstadoProgreso.EN_REFUERZO);
+            progreso = progresoRepository.save(progreso);
+            auditoriaService.registrar(usuarioId, AccionAuditoria.MODULO_EN_REFUERZO, "ProgresoModulo",
+                    progreso.getId(), "MÃ³dulo en refuerzo: " + modulo.getTitulo() + " (nota " + nota + ")");
+        }
+        return mapper.toProgresoResponse(progreso);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResumenAvanceResponse> resumenEquipo(Long managerId) {
+        LocalDateTime desde = LocalDateTime.now().minusDays(DIAS_ALERTA_RECIENTE);
+        List<ResumenAvanceResponse> resumen = new ArrayList<>();
+
+        for (Usuario empleado : usuarioRepository.findByManagerIdAndActivoTrue(managerId)) {
+            List<ProgresoModulo> progresos = progresoDeRutaActual(empleado);
+            int total = progresos.size();
+            int completados = (int) progresos.stream()
+                    .filter(p -> p.getEstado() == EstadoProgreso.COMPLETADO).count();
+            double porcentaje = total == 0 ? 0 : Math.round(completados * 1000.0 / total) / 10.0;
+
+            OptionalDouble promedio = progresos.stream()
+                    .filter(p -> p.getCalificacion() != null)
+                    .mapToDouble(ProgresoModulo::getCalificacion)
+                    .average();
+            int sesionesVerificadas = (int) sesionRepository
+                    .countByEmpleadoIdAndEstado(empleado.getId(), EstadoSesion.VERIFICADA);
+
+            resumen.add(new ResumenAvanceResponse(
+                    empleado.getId(), empleado.getNombre(), total, completados, porcentaje,
+                    promedio.isPresent() ? Double.valueOf(promedio.getAsDouble()) : null,
+                    sesionesVerificadas,
+                    alertaRepository.existsByEmpleadoIdAndFechaAfter(empleado.getId(), desde)));
+        }
+        return resumen;
+    }
+
+    private Usuario buscarUsuario(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + id));
+    }
+
+    /** Solo los mÃ³dulos de la ruta actual; si el usuario cambiÃ³ de ruta, el avance anterior se ignora. */
+    private List<ProgresoModulo> progresoDeRutaActual(Usuario usuario) {
+        if (usuario.getRuta() == null) {
+            return List.of();
+        }
+        Long rutaId = usuario.getRuta().getId();
+        return progresoRepository.findByUsuarioIdOrderByModuloOrdenAsc(usuario.getId()).stream()
+                .filter(p -> p.getModulo().getRuta().getId().equals(rutaId))
+                .toList();
+    }
+
+    private ProgresoModulo obtenerProgreso(Long usuarioId, Long moduloId) {
+        sincronizarRuta(usuarioId);
+        Usuario usuario = buscarUsuario(usuarioId);
+        return progresoDeRutaActual(usuario).stream()
+                .filter(p -> p.getModulo().getId().equals(moduloId))
+                .findFirst()
+                .orElseThrow(() -> new RecursoNoEncontradoException("El mÃ³dulo no pertenece a tu ruta"));
+    }
+
+    private void desbloquearSiguiente(Usuario usuario, Modulo actual) {
+        moduloRepository
+                .findFirstByRutaIdAndOrdenGreaterThanOrderByOrdenAsc(actual.getRuta().getId(), actual.getOrden())
+                .flatMap(siguiente -> progresoRepository.findByUsuarioIdAndModuloId(usuario.getId(), siguiente.getId()))
+                .filter(p -> p.getEstado() == EstadoProgreso.BLOQUEADO)
+                .ifPresent(p -> {
+                    p.setEstado(EstadoProgreso.DISPONIBLE);
+                    progresoRepository.save(p);
+                });
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\ReservaServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.request.ReservaRequest;
+import com.example.onboarding.dto.response.ReservaResponse;
+import com.example.onboarding.entity.EspacioFisico;
+import com.example.onboarding.entity.Reserva;
+import com.example.onboarding.entity.SesionSeguimiento;
+import com.example.onboarding.enums.AccionAuditoria;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.exception.ReglaNegocioException;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.EspacioFisicoRepository;
+import com.example.onboarding.repository.ReservaRepository;
+import com.example.onboarding.repository.SesionSeguimientoRepository;
+import com.example.onboarding.repository.UsuarioRepository;
+import com.example.onboarding.service.AuditoriaService;
+import com.example.onboarding.service.ReservaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ReservaServiceImpl implements ReservaService {
+
+
+    private final ReservaRepository reservaRepository;
+    private final EspacioFisicoRepository espacioRepository;
+    private final SesionSeguimientoRepository sesionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final AuditoriaService auditoriaService;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public ReservaResponse crear(Long usuarioId, ReservaRequest request) {
+        if (!request.fin().isAfter(request.inicio())) {
+            throw new ReglaNegocioException("La hora de fin debe ser posterior a la de inicio");
+        }
+        EspacioFisico espacio = espacioRepository.findById(request.espacioId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Espacio no encontrado: " + request.espacioId()));
+        if (!espacio.getActivo()) {
+            throw new ReglaNegocioException("El espacio no estÃ¡ disponible para reservas");
+        }
+        if (reservaRepository.existeCruce(espacio.getId(), request.inicio(), request.fin())) {
+            throw new ReglaNegocioException("El espacio ya estÃ¡ reservado en ese horario");
+        }
+
+        SesionSeguimiento sesion = null;
+        if (request.sesionId() != null) {
+            sesion = sesionRepository.findById(request.sesionId())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("SesiÃ³n no encontrada: " + request.sesionId()));
+            if (reservaRepository.findBySesionId(sesion.getId()).isPresent()) {
+                throw new ReglaNegocioException("La sesiÃ³n ya tiene un espacio reservado");
+            }
+        }
+
+        Reserva reserva = Reserva.builder()
+                .espacio(espacio)
+                .sesion(sesion)
+                .reservadoPor(usuarioRepository.getReferenceById(usuarioId))
+                .inicio(request.inicio())
+                .fin(request.fin())
+                .build();
+        reserva = reservaRepository.save(reserva);
+
+        auditoriaService.registrar(usuarioId, AccionAuditoria.RESERVA_CREADA, "Reserva", reserva.getId(),
+                "Espacio " + espacio.getNombre() + " reservado desde " + request.inicio());
+        return mapper.toReservaResponse(reserva);
+    }
+
+    @Override
+    @Transactional
+    public void liberarPorSesion(Long sesionId) {
+        reservaRepository.findBySesionId(sesionId).ifPresent(reservaRepository::delete);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReservaResponse> listarPorUsuario(Long usuarioId) {
+        return reservaRepository.findByReservadoPorIdOrderByInicioDesc(usuarioId).stream()
+                .map(mapper::toReservaResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReservaResponse> listarPorEspacio(Long espacioId, LocalDateTime desde, LocalDateTime hasta) {
+        return reservaRepository.findByEspacioIdAndInicioBetweenOrderByInicioAsc(espacioId, desde, hasta).stream()
+                .map(mapper::toReservaResponse).toList();
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\RutaServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+
+
+import com.example.onboarding.dto.request.RutaRequest;
+import com.example.onboarding.dto.response.RutaResponse;
+import com.example.onboarding.entity.Ruta;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.RutaRepository;
+import com.example.onboarding.service.RutaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RutaServiceImpl implements RutaService {
+
+
+    private final RutaRepository rutaRepository;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public RutaResponse crear(RutaRequest request) {
+        Ruta ruta = Ruta.builder()
+                .nombre(request.nombre().trim())
+                .descripcion(request.descripcion())
+                .activa(request.activa() == null || request.activa())
+                .build();
+        return mapper.toRutaResponse(rutaRepository.save(ruta));
+    }
+
+    @Override
+    @Transactional
+    public RutaResponse actualizar(Long id, RutaRequest request) {
+        Ruta ruta = rutaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ruta no encontrada: " + id));
+        ruta.setNombre(request.nombre().trim());
+        ruta.setDescripcion(request.descripcion());
+        if (request.activa() != null) {
+            ruta.setActiva(request.activa());
+        }
+        ruta.setVersion(ruta.getVersion() + 1);
+        return mapper.toRutaResponse(rutaRepository.save(ruta));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RutaResponse obtener(Long id) {
+        Ruta ruta = rutaRepository.findConModulosById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ruta no encontrada: " + id));
+        return mapper.toRutaResponse(ruta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RutaResponse> listarActivas() {
+        return rutaRepository.findByActivaTrue().stream().map(mapper::toRutaResponse).toList();
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\SesionServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+
+
+import com.example.onboarding.dto.request.ReservaRequest;
+import com.example.onboarding.dto.request.SesionRequest;
+import com.example.onboarding.dto.request.SesionSoporteRequest;
+import com.example.onboarding.dto.response.SesionResponse;
+import com.example.onboarding.entity.SesionSeguimiento;
+import com.example.onboarding.entity.Usuario;
+import com.example.onboarding.enums.AccionAuditoria;
+import com.example.onboarding.enums.EstadoSesion;
+import com.example.onboarding.enums.Rol;
+import com.example.onboarding.exception.AccesoDenegadoException;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.exception.ReglaNegocioException;
+import com.example.onboarding.integration.TeamsClient;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.SesionSeguimientoRepository;
+import com.example.onboarding.repository.UsuarioRepository;
+import com.example.onboarding.service.AuditoriaService;
+import com.example.onboarding.service.ReservaService;
+import com.example.onboarding.service.SesionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SesionServiceImpl implements SesionService {
+
+
+    /** MÃ¡ximo de sesiones por empleado, sin contar las canceladas. */
+    private static final int MAX_SESIONES = 10;
+    /** DuraciÃ³n supuesta de cada sesiÃ³n, usada para Teams y para reservar el espacio. */
+    private static final Duration DURACION = Duration.ofHours(1);
+
+    private final SesionSeguimientoRepository sesionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ReservaService reservaService;
+    private final TeamsClient teamsClient;
+    private final AuditoriaService auditoriaService;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public SesionResponse agendar(Long managerId, SesionRequest request) {
+        Usuario manager = buscarUsuario(managerId);
+        if (manager.getRol() != Rol.MANAGER) {
+            throw new AccesoDenegadoException("Solo un manager puede agendar sesiones");
+        }
+        Usuario empleado = buscarUsuario(request.empleadoId());
+        verificarACargo(manager, empleado);
+
+        long vigentes = sesionRepository.countByEmpleadoIdAndEstadoNot(empleado.getId(), EstadoSesion.CANCELADA);
+        if (vigentes >= MAX_SESIONES) {
+            throw new ReglaNegocioException("El empleado ya tiene el mÃ¡ximo de " + MAX_SESIONES + " sesiones");
+        }
+        verificarDisponibilidad(managerId, request.fechaHora());
+
+        SesionSeguimiento sesion = SesionSeguimiento.builder()
+                .manager(manager)
+                .empleado(empleado)
+                .fechaHora(request.fechaHora())
+                .estado(EstadoSesion.PROGRAMADA)
+                .enlaceTeams(crearReunion(manager, empleado, request.fechaHora()))
+                .build();
+        sesion = sesionRepository.save(sesion);
+
+        reservarEspacio(managerId, sesion, request.espacioId());
+        auditoriaService.registrar(managerId, AccionAuditoria.SESION_AGENDADA, "SesionSeguimiento", sesion.getId(),
+                "SesiÃ³n con " + empleado.getNombre() + " el " + sesion.getFechaHora());
+        return mapper.toSesionResponse(sesion);
+    }
+
+    @Override
+    @Transactional
+    public SesionResponse reprogramar(Long managerId, Long sesionId, SesionRequest request) {
+        SesionSeguimiento sesion = buscarSesion(sesionId);
+        verificarPropietario(managerId, sesion);
+        exigirEstado(sesion, EstadoSesion.PROGRAMADA, "Solo se puede reprogramar una sesiÃ³n programada");
+        if (!sesion.getEmpleado().getId().equals(request.empleadoId())) {
+            throw new ReglaNegocioException("No se puede cambiar el empleado; cancela la sesiÃ³n y agenda otra");
+        }
+        if (!sesion.getFechaHora().equals(request.fechaHora())) {
+            verificarDisponibilidad(managerId, request.fechaHora());
+        }
+
+        sesion.setFechaHora(request.fechaHora());
+        sesion.setEnlaceTeams(crearReunion(sesion.getManager(), sesion.getEmpleado(), request.fechaHora()));
+        sesion = sesionRepository.save(sesion);
+
+        reservaService.liberarPorSesion(sesionId);
+        reservarEspacio(managerId, sesion, request.espacioId());
+        auditoriaService.registrar(managerId, AccionAuditoria.SESION_REPROGRAMADA, "SesionSeguimiento", sesionId,
+                "Nueva fecha: " + sesion.getFechaHora());
+        return mapper.toSesionResponse(sesion);
+    }
+
+    @Override
+    @Transactional
+    public SesionResponse cancelar(Long managerId, Long sesionId) {
+        SesionSeguimiento sesion = buscarSesion(sesionId);
+        verificarPropietario(managerId, sesion);
+        exigirEstado(sesion, EstadoSesion.PROGRAMADA, "Solo se puede cancelar una sesiÃ³n programada");
+
+        sesion.setEstado(EstadoSesion.CANCELADA);
+        sesion = sesionRepository.save(sesion);
+        reservaService.liberarPorSesion(sesionId);
+        auditoriaService.registrar(managerId, AccionAuditoria.SESION_CANCELADA, "SesionSeguimiento", sesionId,
+                "SesiÃ³n cancelada");
+        return mapper.toSesionResponse(sesion);
+    }
+
+    @Override
+    @Transactional
+    public SesionResponse marcarRealizada(Long managerId, Long sesionId) {
+        SesionSeguimiento sesion = buscarSesion(sesionId);
+        verificarPropietario(managerId, sesion);
+        exigirEstado(sesion, EstadoSesion.PROGRAMADA, "Solo se puede marcar como realizada una sesiÃ³n programada");
+        if (sesion.getFechaHora().isAfter(LocalDateTime.now())) {
+            throw new ReglaNegocioException("No se puede marcar como realizada una sesiÃ³n que aÃºn no ocurre");
+        }
+
+        sesion.setEstado(EstadoSesion.REALIZADA);
+        sesion = sesionRepository.save(sesion);
+        auditoriaService.registrar(managerId, AccionAuditoria.SESION_REALIZADA, "SesionSeguimiento", sesionId,
+                "SesiÃ³n realizada");
+        return mapper.toSesionResponse(sesion);
+    }
+
+    @Override
+    @Transactional
+    public SesionResponse adjuntarSoporte(Long managerId, Long sesionId, SesionSoporteRequest request) {
+        SesionSeguimiento sesion = buscarSesion(sesionId);
+        verificarPropietario(managerId, sesion);
+        exigirEstado(sesion, EstadoSesion.REALIZADA, "El soporte se adjunta a una sesiÃ³n ya realizada");
+
+        sesion.setSoporteUrl(request.soporteUrl());
+        sesion.setEstado(EstadoSesion.VERIFICADA);
+        sesion = sesionRepository.save(sesion);
+        auditoriaService.registrar(managerId, AccionAuditoria.SESION_VERIFICADA, "SesionSeguimiento", sesionId,
+                "Soporte adjuntado");
+        return mapper.toSesionResponse(sesion);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SesionResponse obtener(Long sesionId) {
+        return mapper.toSesionResponse(buscarSesion(sesionId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SesionResponse> listarPorManager(Long managerId) {
+        return sesionRepository.findByManagerIdOrderByFechaHoraDesc(managerId).stream()
+                .map(mapper::toSesionResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SesionResponse> listarPorEmpleado(Long empleadoId) {
+        return sesionRepository.findByEmpleadoIdOrderByFechaHoraDesc(empleadoId).stream()
+                .map(mapper::toSesionResponse).toList();
+    }
+
+    private Usuario buscarUsuario(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + id));
+    }
+
+    private SesionSeguimiento buscarSesion(Long id) {
+        return sesionRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("SesiÃ³n no encontrada: " + id));
+    }
+
+    private void verificarACargo(Usuario manager, Usuario empleado) {
+        if (empleado.getRol() != Rol.EMPLEADO
+                || empleado.getManager() == null
+                || !empleado.getManager().getId().equals(manager.getId())) {
+            throw new AccesoDenegadoException("El empleado no estÃ¡ a tu cargo");
+        }
+    }
+
+    private void verificarPropietario(Long managerId, SesionSeguimiento sesion) {
+        if (!sesion.getManager().getId().equals(managerId)) {
+            throw new AccesoDenegadoException("La sesiÃ³n pertenece a otro manager");
+        }
+    }
+
+    private void exigirEstado(SesionSeguimiento sesion, EstadoSesion esperado, String mensaje) {
+        if (sesion.getEstado() != esperado) {
+            throw new ReglaNegocioException(mensaje);
+        }
+    }
+
+    private void verificarDisponibilidad(Long managerId, LocalDateTime fechaHora) {
+        if (sesionRepository.existsByManagerIdAndFechaHoraAndEstado(managerId, fechaHora, EstadoSesion.PROGRAMADA)) {
+            throw new ReglaNegocioException("Ya tienes una sesiÃ³n programada a esa hora");
+        }
+    }
+
+    private String crearReunion(Usuario manager, Usuario empleado, LocalDateTime inicio) {
+        return teamsClient.crearReunion("Seguimiento de onboarding: " + empleado.getNombre(),
+                inicio, inicio.plus(DURACION), manager.getCorreo(), empleado.getCorreo());
+    }
+
+    private void reservarEspacio(Long usuarioId, SesionSeguimiento sesion, Long espacioId) {
+        if (espacioId != null) {
+            reservaService.crear(usuarioId, new ReservaRequest(
+                    espacioId, sesion.getId(), sesion.getFechaHora(), sesion.getFechaHora().plus(DURACION)));
+        }
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\serviceImp\UsuarioServiceImpl.java ==========
+
+package com.example.onboarding.serviceImp;
+
+import com.example.onboarding.dto.request.UsuarioRequest;
+import com.example.onboarding.dto.response.UsuarioResponse;
+import com.example.onboarding.entity.Ruta;
+import com.example.onboarding.entity.Usuario;
+import com.example.onboarding.enums.AccionAuditoria;
+import com.example.onboarding.enums.Rol;
+import com.example.onboarding.exception.RecursoNoEncontradoException;
+import com.example.onboarding.exception.ReglaNegocioException;
+import com.example.onboarding.mapper.EntityMapper;
+import com.example.onboarding.repository.RutaRepository;
+import com.example.onboarding.repository.UsuarioRepository;
+import com.example.onboarding.service.AuditoriaService;
+import com.example.onboarding.service.ProgresoService;
+import com.example.onboarding.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+
+@Service
+@RequiredArgsConstructor
+public class UsuarioServiceImpl implements UsuarioService {
+
+
+    private final UsuarioRepository usuarioRepository;
+    private final RutaRepository rutaRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ProgresoService progresoService;
+    private final AuditoriaService auditoriaService;
+    private final EntityMapper mapper;
+
+    @Override
+    @Transactional
+    public UsuarioResponse crear(Long actorId, UsuarioRequest request) {
+        String correo = normalizar(request.correo());
+        if (usuarioRepository.existsByCorreo(correo)) {
+            throw new ReglaNegocioException("Ya existe un usuario con ese correo");
+        }
+        if (request.contrasena() == null || request.contrasena().isBlank()) {
+            throw new ReglaNegocioException("La contraseÃ±a es obligatoria");
+        }
+
+        Usuario usuario = Usuario.builder()
+                .nombre(request.nombre().trim())
+                .correo(correo)
+                .contrasena(passwordEncoder.encode(request.contrasena()))
+                .rol(request.rol())
+                .cargo(request.cargo())
+                .fechaIngreso(request.fechaIngreso())
+                .idMoodle(request.idMoodle())
+                .build();
+        asignarRelaciones(usuario, request);
+        usuario = usuarioRepository.save(usuario);
+
+        if (usuario.getRuta() != null) {
+            progresoService.sincronizarRuta(usuario.getId());
+        }
+        auditoriaService.registrar(actorId, AccionAuditoria.USUARIO_CREADO, "Usuario", usuario.getId(),
+                "Usuario creado: " + usuario.getCorreo());
+        return mapper.toUsuarioResponse(usuario);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponse actualizar(Long actorId, Long id, UsuarioRequest request) {
+        Usuario usuario = buscar(id);
+        String correo = normalizar(request.correo());
+        if (!usuario.getCorreo().equalsIgnoreCase(correo) && usuarioRepository.existsByCorreo(correo)) {
+            throw new ReglaNegocioException("Ya existe un usuario con ese correo");
+        }
+        Long rutaAnterior = usuario.getRuta() != null ? usuario.getRuta().getId() : null;
+
+        usuario.setNombre(request.nombre().trim());
+        usuario.setCorreo(correo);
+        usuario.setRol(request.rol());
+        usuario.setCargo(request.cargo());
+        usuario.setFechaIngreso(request.fechaIngreso());
+        usuario.setIdMoodle(request.idMoodle());
+        if (request.contrasena() != null && !request.contrasena().isBlank()) {
+            usuario.setContrasena(passwordEncoder.encode(request.contrasena()));
+        }
+        asignarRelaciones(usuario, request);
+        usuario = usuarioRepository.save(usuario);
+
+        Long rutaNueva = usuario.getRuta() != null ? usuario.getRuta().getId() : null;
+        if (rutaNueva != null && !Objects.equals(rutaAnterior, rutaNueva)) {
+            progresoService.sincronizarRuta(usuario.getId());
+            auditoriaService.registrar(actorId, AccionAuditoria.RUTA_ASIGNADA, "Usuario", usuario.getId(),
+                    "Ruta asignada: " + usuario.getRuta().getNombre());
+        }
+        auditoriaService.registrar(actorId, AccionAuditoria.USUARIO_MODIFICADO, "Usuario", usuario.getId(),
+                "Usuario modificado: " + usuario.getCorreo());
+        return mapper.toUsuarioResponse(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void desactivar(Long actorId, Long id) {
+        Usuario usuario = buscar(id);
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+        auditoriaService.registrar(actorId, AccionAuditoria.USUARIO_MODIFICADO, "Usuario", id,
+                "Usuario desactivado: " + usuario.getCorreo());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UsuarioResponse obtener(Long id) {
+        return mapper.toUsuarioResponse(buscar(id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponse> listar() {
+        return usuarioRepository.findAll().stream().map(mapper::toUsuarioResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponse> listarEmpleadosDeManager(Long managerId) {
+        return usuarioRepository.findByManagerIdAndActivoTrue(managerId).stream()
+                .map(mapper::toUsuarioResponse).toList();
+    }
+
+    private Usuario buscar(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + id));
+    }
+
+    private String normalizar(String correo) {
+        return correo.trim().toLowerCase();
+    }
+
+    private void asignarRelaciones(Usuario usuario, UsuarioRequest request) {
+        if (request.managerId() != null) {
+            Usuario manager = buscar(request.managerId());
+            if (manager.getRol() != Rol.MANAGER) {
+                throw new ReglaNegocioException("El usuario indicado como manager no tiene rol MANAGER");
+            }
+            usuario.setManager(manager);
+        } else {
+            usuario.setManager(null);
+        }
+
+        if (request.rutaId() != null) {
+            if (usuario.getRol() != Rol.EMPLEADO) {
+                throw new ReglaNegocioException("Solo los empleados tienen una ruta asignada");
+            }
+            Ruta ruta = rutaRepository.findById(request.rutaId())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Ruta no encontrada: " + request.rutaId()));
+            usuario.setRuta(ruta);
+        } else {
+            usuario.setRuta(null);
+        }
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\util\SecurityUtils.java ==========
+
+package com.example.onboarding.util;
+
+import com.example.onboarding.exception.AccesoDenegadoException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+public final class SecurityUtils {
+
+    private SecurityUtils() {
+    }
+
+    /** Id del usuario autenticado. El filtro JWT debe dejarlo como nombre del principal. */
+    public static Long usuarioActualId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            throw new AccesoDenegadoException("No hay una sesiÃ³n autenticada");
+        }
+        try {
+            return Long.valueOf(auth.getName());
+        } catch (NumberFormatException e) {
+            throw new AccesoDenegadoException("La sesiÃ³n no es vÃ¡lida");
+        }
+    }
+}
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\java\com\example\onboarding\util\UbicacionUtil.java ==========
+
+package com.example.onboarding.util;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+
+public final class UbicacionUtil {
+
+    private UbicacionUtil() {
+    }
+
+    /** URI del recurso reciÃ©n creado: la ruta actual mÃ¡s "/{id}". */
+    public static URI de(Object id) {
+        return ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+    }
+}
+
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\resources\application-local.properties ==========
+
+spring.datasource.url=jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require
+spring.datasource.username=postgres.nceozgypyywgwmjkekwd
+spring.datasource.password=Sky112211Cielo
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\main\resources\application.properties ==========
+
+spring.application.name=onboarding
+
+# Carga application-local.properties, donde van las credenciales
+spring.profiles.active=local
+
+# --- Base de datos: en otros entornos se definen por variables de entorno ---
+spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME:postgres}?sslmode=require
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASSWORD}
+
+# Pocas conexiones: Supabase limita las simultÃ¡neas en el plan gratuito
+spring.datasource.hikari.maximum-pool-size=5
+
+# --- JPA / Hibernate ---
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.default_schema=onboarding
+spring.jpa.open-in-view=false
+spring.jpa.show-sql=false
+
+
+========== ARCHIVO: C:\IntelliJ Workspace\Onboarding-main\Onboarding-main\src\test\java\com\example\onboarding\OnboardingApplicationTests.java ==========
+
+package com.example.onboarding;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class OnboardingApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+

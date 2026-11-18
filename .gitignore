@@ -4,5 +4,4 @@ target/
 .vscode/
 # Credenciales locales: nunca al repositorio (hueco 3 del reporte)
 src/main/resources/application-local.properties
-application-local.properties
 uploads/

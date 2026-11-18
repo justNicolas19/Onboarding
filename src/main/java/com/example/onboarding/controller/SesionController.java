@@ -2,12 +2,15 @@ package com.example.onboarding.controller;
 
 import com.example.onboarding.dto.request.SesionRequest;
 import com.example.onboarding.dto.request.SesionSoporteRequest;
+import com.example.onboarding.dto.request.SolicitudSesionRequest;
 import com.example.onboarding.dto.response.SesionResponse;
+import com.example.onboarding.dto.response.SolicitudSesionResponse;
 import com.example.onboarding.exception.AccesoDenegadoException;
 import com.example.onboarding.service.SesionService;
 import com.example.onboarding.util.UbicacionUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -78,5 +81,19 @@ public class SesionController {
     @PreAuthorize("hasRole('EMPLEADO')")
     public ResponseEntity<List<SesionResponse>> misSesiones() {
         return ResponseEntity.ok(sesionService.listarPorEmpleado(usuarioActualId()));
+    }
+
+    /** El empleado pide una sesión a su manager. */
+    @PostMapping("/solicitudes")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public ResponseEntity<SolicitudSesionResponse> solicitar(@Valid @RequestBody SolicitudSesionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sesionService.solicitar(usuarioActualId(), request));
+    }
+
+    /** Solicitudes pendientes de los empleados del manager. */
+    @GetMapping("/solicitudes")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<SolicitudSesionResponse>> solicitudes() {
+        return ResponseEntity.ok(sesionService.solicitudesPendientes(usuarioActualId()));
     }
 }

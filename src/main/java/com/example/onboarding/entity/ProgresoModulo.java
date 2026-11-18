@@ -1,6 +1,5 @@
 package com.example.onboarding.entity;
 
-
 import com.example.onboarding.enums.EstadoProgreso;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,9 +9,10 @@ import java.time.LocalDateTime;
 /** Avance de un empleado en un módulo. Hay una sola fila por pareja empleado-módulo. */
 @Entity
 @Table(name = "progreso_modulo", uniqueConstraints = @UniqueConstraint(name = "uk_progreso_usuario_modulo", columnNames = {"usuario_id", "modulo_id"}))
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class ProgresoModulo {
 

@@ -11,6 +11,8 @@ public interface RutaRepository extends JpaRepository<Ruta, Long> {
 
     List<Ruta> findByActivaTrue();
 
+    List<Ruta> findAllByOrderByNombreAsc();
+
     /** Carga la ruta junto con sus módulos en una sola consulta. */
     @EntityGraph(attributePaths = "modulos")
     Optional<Ruta> findConModulosById(Long id);

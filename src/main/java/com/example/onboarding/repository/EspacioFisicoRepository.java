@@ -8,4 +8,6 @@ import java.util.List;
 public interface EspacioFisicoRepository extends JpaRepository<EspacioFisico, Long> {
 
     List<EspacioFisico> findByActivoTrue();
+
+    List<EspacioFisico> findAllByOrderByNombreAsc();
 }

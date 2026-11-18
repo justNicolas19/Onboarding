@@ -19,6 +19,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> findByRol(Rol rol);
 
-    /** Para saber si ya existe un administrador al arrancar. */
+    /** Líderes visibles para el empleado. */
+    List<Usuario> findByRolAndActivoTrueOrderByNombreAsc(Rol rol);
+
     boolean existsByRol(Rol rol);
+
+    /** "24 empleados asignados" en Rutas y módulos. */
+    long countByRutaIdAndActivoTrue(Long rutaId);
 }

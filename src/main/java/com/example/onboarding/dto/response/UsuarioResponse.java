@@ -15,5 +15,10 @@ public record UsuarioResponse(
         Long managerId,
         String managerNombre,
         Long rutaId,
-        String rutaNombre
+        String rutaNombre,
+        /* Nuevos (hueco 4 y sección 3 del reporte). */
+        String idMoodle,
+        String area,
+        String presentacion,
+        String fotoUrl
 ) {}

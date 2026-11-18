@@ -37,8 +37,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProgresoServiceImpl implements ProgresoService {
 
-
     private static final int DIAS_ALERTA_RECIENTE = 7;
+    /** Sesiones verificadas que exige la auditoría ("Sesiones verificadas: 1/5 mínimo"). */
+    public static final int SESIONES_REQUERIDAS = 5;
+    /** Código que la app usa para mostrar "Calificación pendiente". */
+    public static final String CODIGO_CALIFICACION_PENDIENTE = "CALIFICACION_PENDIENTE";
 
     private final ProgresoModuloRepository progresoRepository;
     private final UsuarioRepository usuarioRepository;
@@ -102,7 +105,7 @@ public class ProgresoServiceImpl implements ProgresoService {
         ProgresoModulo progreso = obtenerProgreso(usuarioId, moduloId);
 
         if (progreso.getEstado() == EstadoProgreso.BLOQUEADO) {
-            throw new ReglaNegocioException("Debes completar el módulo anterior para abrir este");
+            throw new ReglaNegocioException("MODULO_BLOQUEADO", "Debes completar el módulo anterior para abrir este");
         }
         if (progreso.getEstado() == EstadoProgreso.DISPONIBLE || progreso.getEstado() == EstadoProgreso.EN_REFUERZO) {
             progreso.setEstado(EstadoProgreso.EN_CURSO);
@@ -123,16 +126,17 @@ public class ProgresoServiceImpl implements ProgresoService {
         ProgresoModulo progreso = obtenerProgreso(usuarioId, request.moduloId());
 
         if (progreso.getEstado() != EstadoProgreso.EN_CURSO) {
-            throw new ReglaNegocioException("Debes abrir el módulo antes de reportar el avance");
+            throw new ReglaNegocioException("MODULO_NO_ABIERTO", "Debes abrir el módulo antes de reportar el avance");
         }
         if (usuario.getIdMoodle() == null || usuario.getIdMoodle().isBlank()) {
-            throw new ReglaNegocioException("El usuario no tiene un identificador de Moodle asignado");
+            throw new ReglaNegocioException("SIN_ID_MOODLE", "El usuario no tiene un identificador de Moodle asignado");
         }
 
         Modulo modulo = progreso.getModulo();
         Double nota = moodleClient.consultarCalificacion(usuario.getIdMoodle(), modulo.getIdMoodle());
         if (nota == null) {
-            throw new ReglaNegocioException("Moodle aún no reporta una calificación para este módulo");
+            throw new ReglaNegocioException(CODIGO_CALIFICACION_PENDIENTE,
+                    "Moodle aún no reporta una calificación para este módulo");
         }
         progreso.setCalificacion(nota);
 
@@ -176,7 +180,10 @@ public class ProgresoServiceImpl implements ProgresoService {
                     empleado.getId(), empleado.getNombre(), total, completados, porcentaje,
                     promedio.isPresent() ? Double.valueOf(promedio.getAsDouble()) : null,
                     sesionesVerificadas,
-                    alertaRepository.existsByEmpleadoIdAndFechaAfter(empleado.getId(), desde)));
+                    alertaRepository.existsByEmpleadoIdAndFechaAfter(empleado.getId(), desde),
+                    SESIONES_REQUERIDAS,
+                    empleado.getCargo(),
+                    empleado.getRuta() != null ? empleado.getRuta().getNombre() : null));
         }
         return resumen;
     }

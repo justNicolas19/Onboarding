@@ -1,6 +1,7 @@
 package com.example.onboarding.dto.response;
 
 import com.example.onboarding.enums.EstadoProgreso;
+import com.example.onboarding.enums.TipoModulo;
 
 import java.time.LocalDateTime;
 
@@ -14,5 +15,16 @@ public record ProgresoModuloResponse(
         Double calificacion,
         Integer puntajeMinimo,
         LocalDateTime fechaInicio,
-        LocalDateTime fechaFin
+        LocalDateTime fechaFin,
+        /* Nuevos (sección 4 del reporte): ya estaban en Modulo, ahora viajan a la app. */
+        TipoModulo tipo,
+        String descripcion,
+        Integer duracionMinutos,
+        Integer puntosXp,
+        Integer unidad,
+        String unidadTitulo,
+        Long rutaId,
+        String rutaNombre,
+        String urlMoodle,
+        Long evaluacionModuloId
 ) {}

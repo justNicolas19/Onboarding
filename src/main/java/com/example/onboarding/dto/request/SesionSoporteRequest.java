@@ -5,5 +5,7 @@ import jakarta.validation.constraints.Size;
 
 /** Adjunta el soporte que demuestra que la sesión se realizó. */
 public record SesionSoporteRequest(
-        @NotBlank @Size(max = 500) String soporteUrl
+        @NotBlank @Size(max = 500) String soporteUrl,
+        /** Nuevo: "Observaciones (opcional)". */
+        @Size(max = 500) String observaciones
 ) {}

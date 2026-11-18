@@ -1,7 +1,5 @@
 package com.example.onboarding.serviceImp;
 
-
-
 import com.example.onboarding.dto.request.RutaRequest;
 import com.example.onboarding.dto.response.RutaResponse;
 import com.example.onboarding.entity.Ruta;
@@ -18,7 +16,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RutaServiceImpl implements RutaService {
-
 
     private final RutaRepository rutaRepository;
     private final EntityMapper mapper;
@@ -60,5 +57,11 @@ public class RutaServiceImpl implements RutaService {
     @Transactional(readOnly = true)
     public List<RutaResponse> listarActivas() {
         return rutaRepository.findByActivaTrue().stream().map(mapper::toRutaResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RutaResponse> listarTodas() {
+        return rutaRepository.findAllByOrderByNombreAsc().stream().map(mapper::toRutaResponse).toList();
     }
 }

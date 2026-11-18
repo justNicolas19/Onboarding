@@ -1,6 +1,5 @@
 package com.example.onboarding.dto.response;
 
-
 /** Fila del panel de seguimiento del manager (RF7). */
 public record ResumenAvanceResponse(
         Long empleadoId,
@@ -10,5 +9,9 @@ public record ResumenAvanceResponse(
         double porcentajeAvance,
         Double promedioCalificacion,
         int sesionesVerificadas,
-        boolean conAlertaActiva
+        boolean conAlertaActiva,
+        /* Nuevos. */
+        int sesionesRequeridas,
+        String empleadoCargo,
+        String rutaNombre
 ) {}

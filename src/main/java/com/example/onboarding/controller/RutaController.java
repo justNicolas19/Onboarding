@@ -1,9 +1,10 @@
 package com.example.onboarding.controller;
 
-
 import com.example.onboarding.dto.request.RutaRequest;
 import com.example.onboarding.dto.response.RutaResponse;
+import com.example.onboarding.exception.AccesoDenegadoException;
 import com.example.onboarding.service.RutaService;
+import com.example.onboarding.util.SecurityUtils;
 import com.example.onboarding.util.UbicacionUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,16 @@ public class RutaController {
         return ResponseEntity.ok(rutaService.obtener(id));
     }
 
+    /** Por defecto solo las activas. Con incluirInactivas=true (solo administrador) incluye los borradores. */
     @GetMapping
-    public ResponseEntity<List<RutaResponse>> listarActivas() {
+    public ResponseEntity<List<RutaResponse>> listar(
+            @RequestParam(defaultValue = "false") boolean incluirInactivas) {
+        if (incluirInactivas) {
+            if (!SecurityUtils.tieneRol("ADMINISTRADOR")) {
+                throw new AccesoDenegadoException("Solo el administrador puede ver las rutas en borrador");
+            }
+            return ResponseEntity.ok(rutaService.listarTodas());
+        }
         return ResponseEntity.ok(rutaService.listarActivas());
     }
 }

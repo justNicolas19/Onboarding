@@ -1,7 +1,5 @@
 package com.example.onboarding.dto.request;
 
-
-
 import com.example.onboarding.enums.TipoModulo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -16,5 +14,12 @@ public record ModuloRequest(
         @NotNull TipoModulo tipo,
         @NotNull @Min(1) Integer orden,
         @NotBlank @Size(max = 60) String idMoodle,
-        @Min(0) @Max(100) Integer puntajeMinimo
+        @Min(0) @Max(100) Integer puntajeMinimo,
+        /* Nuevos y opcionales (sección 4 del reporte). */
+        @Min(1) @Max(600) Integer duracionMinutos,
+        @Min(0) @Max(10000) Integer puntosXp,
+        @Min(1) Integer unidad,
+        @Size(max = 120) String unidadTitulo,
+        /** Id del módulo de evaluación asociado; debe ser de la misma ruta. */
+        Long evaluacionId
 ) {}

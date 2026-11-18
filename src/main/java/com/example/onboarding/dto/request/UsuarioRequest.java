@@ -16,7 +16,11 @@ public record UsuarioRequest(
         @NotNull Rol rol,
         @Size(max = 100) String cargo,
         LocalDate fechaIngreso,
+        /** Al actualizar: null conserva el actual, texto vacío lo borra (hueco 4 del reporte). */
         @Size(max = 60) String idMoodle,
         Long managerId,
-        Long rutaId
+        Long rutaId,
+        /* Nuevos (sección 3 del reporte). */
+        @Size(max = 100) String area,
+        @Size(max = 500) String presentacion
 ) {}

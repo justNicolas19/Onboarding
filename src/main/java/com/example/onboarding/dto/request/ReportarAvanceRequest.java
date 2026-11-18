@@ -1,6 +1,5 @@
 package com.example.onboarding.dto.request;
 
-
 import jakarta.validation.constraints.NotNull;
 
 /**

@@ -10,7 +10,7 @@ public final class SecurityUtils {
     private SecurityUtils() {
     }
 
-    /** Id del usuario autenticado. El filtro JWT debe dejarlo como nombre del principal. */
+    /** Id del usuario autenticado. El filtro JWT lo deja como nombre del principal. */
     public static Long usuarioActualId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
@@ -21,5 +21,15 @@ public final class SecurityUtils {
         } catch (NumberFormatException e) {
             throw new AccesoDenegadoException("La sesión no es válida");
         }
+    }
+
+    /** Indica si el usuario autenticado tiene el rol, por ejemplo "ADMINISTRADOR". */
+    public static boolean tieneRol(String rol) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return false;
+        }
+        String buscado = "ROLE_" + rol;
+        return auth.getAuthorities().stream().anyMatch(a -> buscado.equals(a.getAuthority()));
     }
 }

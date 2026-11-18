@@ -1,18 +1,17 @@
 package com.example.onboarding.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 @Table(name = "rutas")
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Ruta {
 

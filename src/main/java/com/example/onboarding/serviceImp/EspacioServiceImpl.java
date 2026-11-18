@@ -26,6 +26,7 @@ public class EspacioServiceImpl implements EspacioService {
         EspacioFisico espacio = EspacioFisico.builder()
                 .nombre(request.nombre().trim())
                 .capacidad(request.capacidad())
+                .ubicacion(limpiar(request.ubicacion()))
                 .activo(request.activo() == null || request.activo())
                 .build();
         return mapper.toEspacioResponse(espacioRepository.save(espacio));
@@ -37,6 +38,7 @@ public class EspacioServiceImpl implements EspacioService {
         EspacioFisico espacio = buscar(id);
         espacio.setNombre(request.nombre().trim());
         espacio.setCapacidad(request.capacidad());
+        espacio.setUbicacion(limpiar(request.ubicacion()));
         if (request.activo() != null) {
             espacio.setActivo(request.activo());
         }
@@ -55,8 +57,18 @@ public class EspacioServiceImpl implements EspacioService {
         return espacioRepository.findByActivoTrue().stream().map(mapper::toEspacioResponse).toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EspacioResponse> listarTodos() {
+        return espacioRepository.findAllByOrderByNombreAsc().stream().map(mapper::toEspacioResponse).toList();
+    }
+
     private EspacioFisico buscar(Long id) {
         return espacioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Espacio no encontrado: " + id));
+    }
+
+    private String limpiar(String texto) {
+        return texto == null || texto.isBlank() ? null : texto.trim();
     }
 }

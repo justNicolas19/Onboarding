@@ -2,7 +2,9 @@ package com.example.onboarding.service;
 
 import com.example.onboarding.dto.request.SesionRequest;
 import com.example.onboarding.dto.request.SesionSoporteRequest;
+import com.example.onboarding.dto.request.SolicitudSesionRequest;
 import com.example.onboarding.dto.response.SesionResponse;
+import com.example.onboarding.dto.response.SolicitudSesionResponse;
 
 import java.util.List;
 
@@ -24,4 +26,9 @@ public interface SesionService {
     List<SesionResponse> listarPorManager(Long managerId);
 
     List<SesionResponse> listarPorEmpleado(Long empleadoId);
+
+    /** El empleado pide una sesión a su manager ("Agendar una sesión" en Mis líderes). */
+    SolicitudSesionResponse solicitar(Long empleadoId, SolicitudSesionRequest request);
+
+    List<SolicitudSesionResponse> solicitudesPendientes(Long managerId);
 }

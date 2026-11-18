@@ -4,6 +4,7 @@ import com.example.onboarding.dto.request.ModuloRequest;
 import com.example.onboarding.dto.response.ModuloResponse;
 import com.example.onboarding.entity.Modulo;
 import com.example.onboarding.entity.Ruta;
+import com.example.onboarding.enums.TipoModulo;
 import com.example.onboarding.exception.RecursoNoEncontradoException;
 import com.example.onboarding.exception.ReglaNegocioException;
 import com.example.onboarding.mapper.EntityMapper;
@@ -20,7 +21,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ModuloServiceImpl implements ModuloService {
-
 
     private static final int PUNTAJE_POR_DEFECTO = 70;
 
@@ -43,9 +43,14 @@ public class ModuloServiceImpl implements ModuloService {
                 .descripcion(request.descripcion())
                 .tipo(request.tipo())
                 .orden(request.orden())
-                .idMoodle(request.idMoodle())
+                .idMoodle(request.idMoodle().trim())
                 .puntajeMinimo(request.puntajeMinimo() != null ? request.puntajeMinimo() : PUNTAJE_POR_DEFECTO)
+                .duracionMinutos(request.duracionMinutos())
+                .puntosXp(request.puntosXp())
+                .unidad(request.unidad())
+                .unidadTitulo(limpiar(request.unidadTitulo()))
                 .build();
+        modulo.setEvaluacion(buscarEvaluacion(request.evaluacionId(), ruta.getId(), null));
         return mapper.toModuloResponse(moduloRepository.save(modulo));
     }
 
@@ -64,10 +69,15 @@ public class ModuloServiceImpl implements ModuloService {
         modulo.setDescripcion(request.descripcion());
         modulo.setTipo(request.tipo());
         modulo.setOrden(request.orden());
-        modulo.setIdMoodle(request.idMoodle());
+        modulo.setIdMoodle(request.idMoodle().trim());
         if (request.puntajeMinimo() != null) {
             modulo.setPuntajeMinimo(request.puntajeMinimo());
         }
+        modulo.setDuracionMinutos(request.duracionMinutos());
+        modulo.setPuntosXp(request.puntosXp());
+        modulo.setUnidad(request.unidad());
+        modulo.setUnidadTitulo(limpiar(request.unidadTitulo()));
+        modulo.setEvaluacion(buscarEvaluacion(request.evaluacionId(), request.rutaId(), modulo.getId()));
         return mapper.toModuloResponse(moduloRepository.save(modulo));
     }
 
@@ -78,6 +88,9 @@ public class ModuloServiceImpl implements ModuloService {
         if (progresoRepository.existsByModuloId(id)) {
             throw new ReglaNegocioException("El módulo ya tiene avances registrados y no se puede eliminar");
         }
+        // Los módulos de contenido que apuntaban a esta evaluación quedan sin evaluación asociada.
+        moduloRepository.findByEvaluacionId(id).forEach(m -> m.setEvaluacion(null));
+        modulo.getRuta().getModulos().remove(modulo);
         moduloRepository.delete(modulo);
     }
 
@@ -91,5 +104,27 @@ public class ModuloServiceImpl implements ModuloService {
     private Modulo buscar(Long id) {
         return moduloRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Módulo no encontrado: " + id));
+    }
+
+    /** La evaluación debe existir, ser de la misma ruta, ser de tipo EVALUACION y no ser el propio módulo. */
+    private Modulo buscarEvaluacion(Long evaluacionId, Long rutaId, Long moduloId) {
+        if (evaluacionId == null) {
+            return null;
+        }
+        if (evaluacionId.equals(moduloId)) {
+            throw new ReglaNegocioException("Un módulo no puede ser su propia evaluación");
+        }
+        Modulo evaluacion = buscar(evaluacionId);
+        if (!evaluacion.getRuta().getId().equals(rutaId)) {
+            throw new ReglaNegocioException("La evaluación debe pertenecer a la misma ruta");
+        }
+        if (evaluacion.getTipo() != TipoModulo.EVALUACION) {
+            throw new ReglaNegocioException("El módulo asociado como evaluación debe ser de tipo EVALUACION");
+        }
+        return evaluacion;
+    }
+
+    private String limpiar(String texto) {
+        return texto == null || texto.isBlank() ? null : texto.trim();
     }
 }

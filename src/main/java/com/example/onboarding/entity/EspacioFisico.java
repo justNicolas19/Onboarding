@@ -1,15 +1,14 @@
 package com.example.onboarding.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Table(name = "espacios")
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class EspacioFisico {
 
@@ -22,6 +21,10 @@ public class EspacioFisico {
 
     @Column(nullable = false)
     private Integer capacidad;
+
+    /** Ubicación o nota del espacio: "planta 2", "videoconferencia", "mantenimiento". */
+    @Column(length = 150)
+    private String ubicacion;
 
     @Column(nullable = false)
     @Builder.Default

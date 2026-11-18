@@ -16,7 +16,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("API de Onboarding")
-                        .version("1.0")
+                        .version("1.1")
                         .description("Plataforma móvil de onboarding y capacitación normativa"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components().addSecuritySchemes("bearerAuth",

@@ -5,5 +5,9 @@ import com.example.onboarding.dto.response.AuthResponse;
 
 public interface AuthService {
 
-    AuthResponse login(LoginRequest request);
+    /** Valida correo y contraseña, rechaza cuentas desactivadas y registra INICIO_SESION. */
+    AuthResponse iniciarSesion(LoginRequest request);
+
+    /** Envía instrucciones si el correo existe. No revela si existe o no. */
+    void solicitarRecuperacion(String correo);
 }

@@ -8,5 +8,7 @@ public record RutaResponse(
         String descripcion,
         Integer version,
         Boolean activa,
-        List<ModuloResponse> modulos
+        List<ModuloResponse> modulos,
+        /** Nuevo: "24 empleados asignados". */
+        long empleadosAsignados
 ) {}

@@ -9,5 +9,11 @@ public record ReservaResponse(
         Long sesionId,
         Long reservadoPorId,
         LocalDateTime inicio,
-        LocalDateTime fin
+        LocalDateTime fin,
+        /* Nuevos: lo que muestran "Mis reservas" y "Reserva confirmada". */
+        Integer espacioCapacidad,
+        String reservadoPorNombre,
+        String reservadoPorArea,
+        String sesionAsunto,
+        String sesionManagerNombre
 ) {}

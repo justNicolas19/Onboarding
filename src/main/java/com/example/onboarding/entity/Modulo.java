@@ -1,17 +1,21 @@
 package com.example.onboarding.entity;
 
-
 import com.example.onboarding.enums.TipoModulo;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "modulos", uniqueConstraints = @UniqueConstraint(name = "uk_modulo_ruta_orden", columnNames = {"ruta_id", "orden"}))
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Modulo {
+
+    public static final int DURACION_POR_DEFECTO = 10;
+    public static final int XP_POR_DEFECTO = 100;
+    public static final int UNIDAD_POR_DEFECTO = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +47,27 @@ public class Modulo {
     @Column(nullable = false)
     @Builder.Default
     private Integer puntajeMinimo = 70;
+
+    /*
+     * Campos nuevos (sección 4 del reporte). Son nullable en la base para que
+     * ddl-auto=update pueda agregarlos sobre tablas con datos; el mapper aplica los valores por defecto.
+     */
+
+    /** Duración estimada en minutos ("10 min" en el Figma). */
+    private Integer duracionMinutos;
+
+    /** Puntos de experiencia al completar el módulo ("+300 XP"). */
+    private Integer puntosXp;
+
+    /** Número de unidad dentro de la ruta ("UNIDAD 1"). */
+    private Integer unidad;
+
+    /** Título de la unidad ("¡Hola, nuevo comienzo!"). */
+    @Column(length = 120)
+    private String unidadTitulo;
+
+    /** Evaluación asociada a este módulo de contenido ("Ir a la evaluación"). */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evaluacion_id")
+    private Modulo evaluacion;
 }

@@ -26,7 +26,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-
     private final UsuarioRepository usuarioRepository;
     private final RutaRepository rutaRepository;
     private final PasswordEncoder passwordEncoder;
@@ -50,9 +49,11 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .correo(correo)
                 .contrasena(passwordEncoder.encode(request.contrasena()))
                 .rol(request.rol())
-                .cargo(request.cargo())
+                .cargo(limpiar(request.cargo()))
                 .fechaIngreso(request.fechaIngreso())
-                .idMoodle(request.idMoodle())
+                .idMoodle(limpiar(request.idMoodle()))
+                .area(limpiar(request.area()))
+                .presentacion(limpiar(request.presentacion()))
                 .build();
         asignarRelaciones(usuario, request);
         usuario = usuarioRepository.save(usuario);
@@ -78,9 +79,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setNombre(request.nombre().trim());
         usuario.setCorreo(correo);
         usuario.setRol(request.rol());
-        usuario.setCargo(request.cargo());
+        usuario.setCargo(limpiar(request.cargo()));
         usuario.setFechaIngreso(request.fechaIngreso());
-        usuario.setIdMoodle(request.idMoodle());
+        // Hueco 4: antes se borraba el idMoodle al editar sin reescribirlo. Ahora null lo conserva.
+        if (request.idMoodle() != null) {
+            usuario.setIdMoodle(limpiar(request.idMoodle()));
+        }
+        usuario.setArea(limpiar(request.area()));
+        usuario.setPresentacion(limpiar(request.presentacion()));
         if (request.contrasena() != null && !request.contrasena().isBlank()) {
             usuario.setContrasena(passwordEncoder.encode(request.contrasena()));
         }
@@ -101,6 +107,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public void desactivar(Long actorId, Long id) {
+        if (actorId.equals(id)) {
+            throw new ReglaNegocioException("No puedes desactivar tu propia cuenta");
+        }
         Usuario usuario = buscar(id);
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
@@ -134,6 +143,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private String normalizar(String correo) {
         return correo.trim().toLowerCase();
+    }
+
+    private String limpiar(String texto) {
+        return texto == null || texto.isBlank() ? null : texto.trim();
     }
 
     private void asignarRelaciones(Usuario usuario, UsuarioRequest request) {

@@ -19,4 +19,7 @@ public interface ModuloRepository extends JpaRepository<Modulo, Long> {
     Optional<Modulo> findFirstByRutaIdOrderByOrdenAsc(Long rutaId);
 
     long countByRutaId(Long rutaId);
+
+    /** Módulos de contenido que apuntan a esta evaluación. */
+    List<Modulo> findByEvaluacionId(Long evaluacionId);
 }

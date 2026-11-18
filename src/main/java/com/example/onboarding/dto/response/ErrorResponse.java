@@ -1,6 +1,5 @@
 package com.example.onboarding.dto.response;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,5 +8,7 @@ public record ErrorResponse(
         int status,
         String error,
         String mensaje,
-        List<String> detalles
+        List<String> detalles,
+        /** Nuevo: código estable para que la app distinga casos (por ejemplo CALIFICACION_PENDIENTE). */
+        String codigo
 ) {}

@@ -21,8 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AlertaRezagoServiceImpl implements AlertaRezagoService {
 
-
     private static final int MAX_MOTIVO = 300;
+    private static final int MAX_TITULO = 120;
 
     private final AlertaRezagoRepository alertaRepository;
     private final UsuarioRepository usuarioRepository;
@@ -32,13 +32,23 @@ public class AlertaRezagoServiceImpl implements AlertaRezagoService {
     @Override
     @Transactional
     public AlertaRezagoResponse generar(Long empleadoId, String motivo, NivelAlerta nivel) {
+        return generar(empleadoId, null, motivo, nivel);
+    }
+
+    @Override
+    @Transactional
+    public AlertaRezagoResponse generar(Long empleadoId, String titulo, String motivo, NivelAlerta nivel) {
         Usuario empleado = usuarioRepository.findById(empleadoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + empleadoId));
         if (motivo.length() > MAX_MOTIVO) {
             motivo = motivo.substring(0, MAX_MOTIVO);
         }
+        if (titulo != null && titulo.length() > MAX_TITULO) {
+            titulo = titulo.substring(0, MAX_TITULO);
+        }
         AlertaRezago alerta = alertaRepository.save(AlertaRezago.builder()
                 .empleado(empleado)
+                .titulo(titulo)
                 .motivo(motivo)
                 .nivel(nivel)
                 .build());

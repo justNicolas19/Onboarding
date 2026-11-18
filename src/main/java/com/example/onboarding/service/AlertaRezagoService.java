@@ -10,6 +10,9 @@ public interface AlertaRezagoService {
     /** Lo invoca el motor de IA cuando detecta rezago. */
     AlertaRezagoResponse generar(Long empleadoId, String motivo, NivelAlerta nivel);
 
+    /** Igual que generar, con un título corto para la tarjeta de la app. */
+    AlertaRezagoResponse generar(Long empleadoId, String titulo, String motivo, NivelAlerta nivel);
+
     List<AlertaRezagoResponse> listarPorEmpleado(Long empleadoId);
 
     List<AlertaRezagoResponse> listarPorManager(Long managerId);

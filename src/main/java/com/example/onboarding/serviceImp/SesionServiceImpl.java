@@ -1,15 +1,17 @@
 package com.example.onboarding.serviceImp;
 
-
-
 import com.example.onboarding.dto.request.ReservaRequest;
 import com.example.onboarding.dto.request.SesionRequest;
 import com.example.onboarding.dto.request.SesionSoporteRequest;
+import com.example.onboarding.dto.request.SolicitudSesionRequest;
 import com.example.onboarding.dto.response.SesionResponse;
+import com.example.onboarding.dto.response.SolicitudSesionResponse;
 import com.example.onboarding.entity.SesionSeguimiento;
+import com.example.onboarding.entity.SolicitudSesion;
 import com.example.onboarding.entity.Usuario;
 import com.example.onboarding.enums.AccionAuditoria;
 import com.example.onboarding.enums.EstadoSesion;
+import com.example.onboarding.enums.EstadoSolicitud;
 import com.example.onboarding.enums.Rol;
 import com.example.onboarding.exception.AccesoDenegadoException;
 import com.example.onboarding.exception.RecursoNoEncontradoException;
@@ -17,6 +19,7 @@ import com.example.onboarding.exception.ReglaNegocioException;
 import com.example.onboarding.integration.TeamsClient;
 import com.example.onboarding.mapper.EntityMapper;
 import com.example.onboarding.repository.SesionSeguimientoRepository;
+import com.example.onboarding.repository.SolicitudSesionRepository;
 import com.example.onboarding.repository.UsuarioRepository;
 import com.example.onboarding.service.AuditoriaService;
 import com.example.onboarding.service.ReservaService;
@@ -25,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,14 +35,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SesionServiceImpl implements SesionService {
 
-
     /** Máximo de sesiones por empleado, sin contar las canceladas. */
     private static final int MAX_SESIONES = 10;
-    /** Duración supuesta de cada sesión, usada para Teams y para reservar el espacio. */
-    private static final Duration DURACION = Duration.ofHours(1);
 
     private final SesionSeguimientoRepository sesionRepository;
     private final UsuarioRepository usuarioRepository;
+    private final SolicitudSesionRepository solicitudRepository;
     private final ReservaService reservaService;
     private final TeamsClient teamsClient;
     private final AuditoriaService auditoriaService;
@@ -58,7 +58,7 @@ public class SesionServiceImpl implements SesionService {
 
         long vigentes = sesionRepository.countByEmpleadoIdAndEstadoNot(empleado.getId(), EstadoSesion.CANCELADA);
         if (vigentes >= MAX_SESIONES) {
-            throw new ReglaNegocioException("El empleado ya tiene el máximo de " + MAX_SESIONES + " sesiones");
+            throw new ReglaNegocioException("MAX_SESIONES", "El empleado ya tiene el máximo de " + MAX_SESIONES + " sesiones");
         }
         verificarDisponibilidad(managerId, request.fechaHora());
 
@@ -67,11 +67,18 @@ public class SesionServiceImpl implements SesionService {
                 .empleado(empleado)
                 .fechaHora(request.fechaHora())
                 .estado(EstadoSesion.PROGRAMADA)
-                .enlaceTeams(crearReunion(manager, empleado, request.fechaHora()))
+                .asunto(asuntoDe(request.asunto(), null))
+                .descripcion(limpiar(request.descripcion()))
+                .duracionMinutos(request.duracionMinutos() != null
+                        ? request.duracionMinutos() : SesionSeguimiento.DURACION_POR_DEFECTO)
                 .build();
+        sesion.setEnlaceTeams(crearReunion(sesion));
         sesion = sesionRepository.save(sesion);
 
         reservarEspacio(managerId, sesion, request.espacioId());
+        // Las solicitudes pendientes del empleado quedan atendidas con esta sesión.
+        solicitudRepository.findByEmpleadoIdAndEstado(empleado.getId(), EstadoSolicitud.PENDIENTE)
+                .forEach(s -> s.setEstado(EstadoSolicitud.ATENDIDA));
         auditoriaService.registrar(managerId, AccionAuditoria.SESION_AGENDADA, "SesionSeguimiento", sesion.getId(),
                 "Sesión con " + empleado.getNombre() + " el " + sesion.getFechaHora());
         return mapper.toSesionResponse(sesion);
@@ -91,7 +98,14 @@ public class SesionServiceImpl implements SesionService {
         }
 
         sesion.setFechaHora(request.fechaHora());
-        sesion.setEnlaceTeams(crearReunion(sesion.getManager(), sesion.getEmpleado(), request.fechaHora()));
+        sesion.setAsunto(asuntoDe(request.asunto(), sesion.getAsunto()));
+        if (request.descripcion() != null) {
+            sesion.setDescripcion(limpiar(request.descripcion()));
+        }
+        if (request.duracionMinutos() != null) {
+            sesion.setDuracionMinutos(request.duracionMinutos());
+        }
+        sesion.setEnlaceTeams(crearReunion(sesion));
         sesion = sesionRepository.save(sesion);
 
         reservaService.liberarPorSesion(sesionId);
@@ -123,7 +137,7 @@ public class SesionServiceImpl implements SesionService {
         verificarPropietario(managerId, sesion);
         exigirEstado(sesion, EstadoSesion.PROGRAMADA, "Solo se puede marcar como realizada una sesión programada");
         if (sesion.getFechaHora().isAfter(LocalDateTime.now())) {
-            throw new ReglaNegocioException("No se puede marcar como realizada una sesión que aún no ocurre");
+            throw new ReglaNegocioException("SESION_FUTURA", "No se puede marcar como realizada una sesión que aún no ocurre");
         }
 
         sesion.setEstado(EstadoSesion.REALIZADA);
@@ -140,7 +154,9 @@ public class SesionServiceImpl implements SesionService {
         verificarPropietario(managerId, sesion);
         exigirEstado(sesion, EstadoSesion.REALIZADA, "El soporte se adjunta a una sesión ya realizada");
 
-        sesion.setSoporteUrl(request.soporteUrl());
+        sesion.setSoporteUrl(request.soporteUrl().trim());
+        sesion.setObservaciones(limpiar(request.observaciones()));
+        sesion.setFechaVerificacion(LocalDateTime.now());
         sesion.setEstado(EstadoSesion.VERIFICADA);
         sesion = sesionRepository.save(sesion);
         auditoriaService.registrar(managerId, AccionAuditoria.SESION_VERIFICADA, "SesionSeguimiento", sesionId,
@@ -166,6 +182,37 @@ public class SesionServiceImpl implements SesionService {
     public List<SesionResponse> listarPorEmpleado(Long empleadoId) {
         return sesionRepository.findByEmpleadoIdOrderByFechaHoraDesc(empleadoId).stream()
                 .map(mapper::toSesionResponse).toList();
+    }
+
+    @Override
+    @Transactional
+    public SolicitudSesionResponse solicitar(Long empleadoId, SolicitudSesionRequest request) {
+        Usuario empleado = buscarUsuario(empleadoId);
+        if (empleado.getManager() == null) {
+            throw new ReglaNegocioException("SIN_MANAGER", "Aún no tienes un manager asignado");
+        }
+        if (solicitudRepository.existsByEmpleadoIdAndEstado(empleadoId, EstadoSolicitud.PENDIENTE)) {
+            throw new ReglaNegocioException("SOLICITUD_PENDIENTE", "Ya tienes una solicitud pendiente con tu manager");
+        }
+        if (request.fechaPropuesta() != null && request.fechaPropuesta().isBefore(LocalDateTime.now())) {
+            throw new ReglaNegocioException("La fecha propuesta debe ser futura");
+        }
+        SolicitudSesion solicitud = solicitudRepository.save(SolicitudSesion.builder()
+                .empleado(empleado)
+                .manager(empleado.getManager())
+                .fechaPropuesta(request.fechaPropuesta())
+                .comentario(limpiar(request.comentario()))
+                .build());
+        auditoriaService.registrar(empleadoId, AccionAuditoria.SESION_SOLICITADA, "SolicitudSesion",
+                solicitud.getId(), "Solicitud de sesión para " + empleado.getManager().getNombre());
+        return mapper.toSolicitudResponse(solicitud);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SolicitudSesionResponse> solicitudesPendientes(Long managerId) {
+        return solicitudRepository.findByManagerIdAndEstadoOrderByFechaDesc(managerId, EstadoSolicitud.PENDIENTE)
+                .stream().map(mapper::toSolicitudResponse).toList();
     }
 
     private Usuario buscarUsuario(Long id) {
@@ -204,15 +251,27 @@ public class SesionServiceImpl implements SesionService {
         }
     }
 
-    private String crearReunion(Usuario manager, Usuario empleado, LocalDateTime inicio) {
-        return teamsClient.crearReunion("Seguimiento de onboarding: " + empleado.getNombre(),
-                inicio, inicio.plus(DURACION), manager.getCorreo(), empleado.getCorreo());
+    private String crearReunion(SesionSeguimiento sesion) {
+        return teamsClient.crearReunion(sesion.getAsunto() + ": " + sesion.getEmpleado().getNombre(),
+                sesion.getFechaHora(), sesion.fechaFin(),
+                sesion.getManager().getCorreo(), sesion.getEmpleado().getCorreo());
     }
 
     private void reservarEspacio(Long usuarioId, SesionSeguimiento sesion, Long espacioId) {
         if (espacioId != null) {
             reservaService.crear(usuarioId, new ReservaRequest(
-                    espacioId, sesion.getId(), sesion.getFechaHora(), sesion.getFechaHora().plus(DURACION)));
+                    espacioId, sesion.getId(), sesion.getFechaHora(), sesion.fechaFin()));
         }
+    }
+
+    private String asuntoDe(String pedido, String actual) {
+        if (pedido != null && !pedido.isBlank()) {
+            return pedido.trim();
+        }
+        return actual != null ? actual : SesionSeguimiento.ASUNTO_POR_DEFECTO;
+    }
+
+    private String limpiar(String texto) {
+        return texto == null || texto.isBlank() ? null : texto.trim();
     }
 }

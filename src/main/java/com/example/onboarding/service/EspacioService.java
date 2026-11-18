@@ -14,4 +14,7 @@ public interface EspacioService {
     EspacioResponse obtener(Long id);
 
     List<EspacioResponse> listarActivos();
+
+    /** Todos los espacios, activos e inactivos (solo administrador; hueco 5 del reporte). */
+    List<EspacioResponse> listarTodos();
 }

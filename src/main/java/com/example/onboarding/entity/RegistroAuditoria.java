@@ -15,9 +15,10 @@ import java.time.LocalDateTime;
 @Entity
 @Immutable
 @Table(name = "auditoria")
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class RegistroAuditoria {
 

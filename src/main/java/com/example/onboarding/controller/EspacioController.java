@@ -2,7 +2,9 @@ package com.example.onboarding.controller;
 
 import com.example.onboarding.dto.request.EspacioRequest;
 import com.example.onboarding.dto.response.EspacioResponse;
+import com.example.onboarding.exception.AccesoDenegadoException;
 import com.example.onboarding.service.EspacioService;
+import com.example.onboarding.util.SecurityUtils;
 import com.example.onboarding.util.UbicacionUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +41,16 @@ public class EspacioController {
         return ResponseEntity.ok(espacioService.obtener(id));
     }
 
+    /** Por defecto solo los activos. Con incluirInactivos=true (solo administrador) devuelve todos. */
     @GetMapping
-    public ResponseEntity<List<EspacioResponse>> listarActivos() {
+    public ResponseEntity<List<EspacioResponse>> listar(
+            @RequestParam(defaultValue = "false") boolean incluirInactivos) {
+        if (incluirInactivos) {
+            if (!SecurityUtils.tieneRol("ADMINISTRADOR")) {
+                throw new AccesoDenegadoException("Solo el administrador puede ver los espacios inactivos");
+            }
+            return ResponseEntity.ok(espacioService.listarTodos());
+        }
         return ResponseEntity.ok(espacioService.listarActivos());
     }
 }

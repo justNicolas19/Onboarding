@@ -1,7 +1,5 @@
 package com.example.onboarding.entity;
 
-
-
 import com.example.onboarding.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,9 +8,10 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "usuarios")
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
 
@@ -56,4 +55,18 @@ public class Usuario {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ruta_id")
     private Ruta ruta;
+
+    /* Campos nuevos (sección 3 del reporte). */
+
+    /** Área de la empresa ("Tecnología", "Recursos Humanos"). */
+    @Column(length = 100)
+    private String area;
+
+    /** Texto de presentación que ve el empleado en "Tu líder" ("Sobre Elena"). */
+    @Column(length = 500)
+    private String presentacion;
+
+    /** Ruta pública de la foto de perfil. */
+    @Column(length = 500)
+    private String fotoUrl;
 }

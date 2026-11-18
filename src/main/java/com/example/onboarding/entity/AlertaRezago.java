@@ -8,9 +8,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "alertas_rezago")
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class AlertaRezago {
 
@@ -21,6 +22,10 @@ public class AlertaRezago {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "empleado_id", nullable = false)
     private Usuario empleado;
+
+    /** Título corto que la app muestra en negrita ("Completa tu seguimiento"). Opcional. */
+    @Column(length = 120)
+    private String titulo;
 
     @Column(nullable = false, length = 300)
     private String motivo;

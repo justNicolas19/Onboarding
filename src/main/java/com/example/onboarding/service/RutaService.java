@@ -14,4 +14,7 @@ public interface RutaService {
     RutaResponse obtener(Long id);
 
     List<RutaResponse> listarActivas();
+
+    /** Todas las rutas, incluidas las de borrador (solo administrador; hueco 5 del reporte). */
+    List<RutaResponse> listarTodas();
 }
